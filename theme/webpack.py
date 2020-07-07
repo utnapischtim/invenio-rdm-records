@@ -19,13 +19,10 @@ def theme():
     """
     return WebpackBundle(
         __name__,
-        'assets',
+        "assets",
         entry={
-            'invenio-rdm-records-theme':
-                './scss/invenio_rdm_records/theme.scss',
-            'invenio-rdm-records-js': './js/invenio_rdm_records/rdmrecords.js',
+            "invenio-rdm-records-theme": "./scss/invenio_rdm_records/theme.scss",
+            "invenio-rdm-records-js": "./js/invenio_rdm_records/rdmrecords.js",
         },
-        dependencies={
-            'jquery': '3.1.0'
-        }
+        dependencies={"jquery": "3.1.0"},
     )

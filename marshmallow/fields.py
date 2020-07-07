@@ -21,9 +21,7 @@ class EDTFLevel0DateString(fields.Str):
     Made a field for stronger semantics than just a validator.
     """
 
-    default_error_messages = {
-        "invalid": _("Please provide a valid date or interval.")
-    }
+    default_error_messages = {"invalid": _("Please provide a valid date or interval.")}
 
     def _deserialize(self, value, attr, data, **kwargs):
         """Deserialize an EDTF Level 0 formatted date string.
@@ -37,9 +35,8 @@ class EDTFLevel0DateString(fields.Str):
         """
         if not value:
             today_str = date.today().isoformat()
-            return (
-                super(EDTFLevel0DateString, self)
-                ._deserialize(today_str, attr, data, **kwargs)
+            return super(EDTFLevel0DateString, self)._deserialize(
+                today_str, attr, data, **kwargs
             )
 
         parser = level0Expression("level0")
@@ -58,9 +55,8 @@ class EDTFLevel0DateString(fields.Str):
             if result.upper_strict() < result.lower_strict():
                 raise self.make_error("invalid")
 
-            return (
-                super(EDTFLevel0DateString, self)
-                ._deserialize(str(result), attr, data, **kwargs)
+            return super(EDTFLevel0DateString, self)._deserialize(
+                str(result), attr, data, **kwargs
             )
         except ParseException:
             raise self.make_error("invalid")

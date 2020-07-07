@@ -4,7 +4,6 @@
   "title": "Invenio Datacite based Record Schema v1.0.0",
   "type": "object",
   "additionalProperties": false,
-
   "properties": {
     "$schema": {
       "description": "This record's jsonschema.",
@@ -93,18 +92,26 @@
       "type": "array",
       "minItems": 0,
       "uniqueItems": true,
-      "items":{
-          "type": "object",
-          "properties": {
-              "user": {"type": "string"},
-              "note": {"type": "string"},
-              "timestamp": {
-                "description": "ISO8601 formatted date time stamp.",
-                "type": "string",
-                "format": "date-time"
-              }
+      "items": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "string"
           },
-          "required": ["user", "note", "timestamp"]
+          "note": {
+            "type": "string"
+          },
+          "timestamp": {
+            "description": "ISO8601 formatted date time stamp.",
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "user",
+          "note",
+          "timestamp"
+        ]
       }
     },
     "_recid": {
@@ -158,11 +165,15 @@
     "community": {
       "type": "object",
       "properties": {
-        "primary": {"type": "string"},
+        "primary": {
+          "type": "string"
+        },
         "secondary": {
           "type": "array",
           "minItems": 0,
-          "items":{"type": "string"}
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -187,7 +198,9 @@
     },
     "identifiers": {
       "type": "object",
-      "additionalProperties": { "type": "string" }
+      "additionalProperties": {
+        "type": "string"
+      }
     },
     "creators": {
       "description": "Creators in order of importance.",
@@ -197,33 +210,55 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-            "name": {"type": "string"},
-            "type": {
-              "type": "string",
-              "description": "Type of name: Organizational or Personal"
-            },
-            "given_name": {"type": "string"},
-            "family_name": {"type": "string"},
-            "identifiers": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of name: Organizational or Personal"
+          },
+          "given_name": {
+            "type": "string"
+          },
+          "family_name": {
+            "type": "string"
+          },
+          "identifiers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "affiliations": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
               "type": "object",
-              "additionalProperties": { "type": "string" }
-            },
-            "affiliations": {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                  "type": "object",
-                  "properties": {
-                      "name": {"type": "string"},
-                      "identifier": {"type": "string"},
-                      "scheme": {"type": "string"}
-                  },
-                  "required": ["name", "identifier", "scheme"]
-              }
-            },
-            "pure_personRole": {"type": "string"}
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "identifier": {
+                  "type": "string"
+                },
+                "scheme": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "identifier",
+                "scheme"
+              ]
+            }
+          },
+          "pure_personRole": {
+            "type": "string"
+          }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       }
     },
     "titles": {
@@ -234,21 +269,23 @@
       "items": {
         "type": "object",
         "properties": {
-            "title": {
-              "description": "Title of the record.",
-              "type": "string"
-            },
-            "type": {
-              "description": "Type of title.",
-              "type": "string"
-            },
-            "lang": {
-              "description": "Language of the title. ISO 639-3 language code.",
-              "type": "string",
-              "maxLength": 3
-            }
+          "title": {
+            "description": "Title of the record.",
+            "type": "string"
+          },
+          "type": {
+            "description": "Type of title.",
+            "type": "string"
+          },
+          "lang": {
+            "description": "Language of the title. ISO 639-3 language code.",
+            "type": "string",
+            "maxLength": 3
+          }
         },
-        "required": ["title"]
+        "required": [
+          "title"
+        ]
       }
     },
     "publication_date": {
@@ -265,13 +302,21 @@
       "uniqueItems": true,
       "minItems": 0,
       "items": {
-          "type": "object",
-          "properties": {
-              "subject": {"type": "string"},
-              "identifier": {"type": "string"},
-              "scheme": {"type": "string"}
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string"
           },
-          "required": ["subject"]
+          "identifier": {
+            "type": "string"
+          },
+          "scheme": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject"
+        ]
       }
     },
     "contributors": {
@@ -282,30 +327,55 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-            "name": {"type": "string"},
-            "type": {"type": "string"},
-            "given_name": {"type": "string"},
-            "family_name": {"type": "string"},
-            "identifiers": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "given_name": {
+            "type": "string"
+          },
+          "family_name": {
+            "type": "string"
+          },
+          "identifiers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "affiliations": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
               "type": "object",
-              "additionalProperties": { "type": "string" }
-            },
-            "affiliations": {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                  "type": "object",
-                  "properties": {
-                      "name": {"type": "string"},
-                      "identifier": {"type": "string"},
-                      "scheme": {"type": "string"}
-                  },
-                  "required": ["name", "identifier", "scheme"]
-              }
-            },
-            "role": {"type": "string"}
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "identifier": {
+                  "type": "string"
+                },
+                "scheme": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "identifier",
+                "scheme"
+              ]
+            }
+          },
+          "role": {
+            "type": "string"
+          }
         },
-        "required": ["name", "role"]
+        "required": [
+          "name",
+          "role"
+        ]
       }
     },
     "dates": {
@@ -334,7 +404,9 @@
             "description": "Type of the date interval."
           }
         },
-        "required": ["type"]
+        "required": [
+          "type"
+        ]
       }
     },
     "language": {
@@ -347,22 +419,38 @@
       "uniqueItems": true,
       "minItems": 0,
       "items": {
-          "type": "object",
-          "properties": {
-            "identifier": {"type": "string"},
-            "scheme": {"type": "string"},
-            "relation_type": {"type": "string"},
-            "resource_type": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "type": {"type": "string"},
-                "subtype": {"type": "string"}
-              },
-              "required": ["type"]
-            }
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string"
           },
-          "required": ["identifier", "scheme", "relation_type"]
+          "scheme": {
+            "type": "string"
+          },
+          "relation_type": {
+            "type": "string"
+          },
+          "resource_type": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "subtype": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        },
+        "required": [
+          "identifier",
+          "scheme",
+          "relation_type"
+        ]
       }
     },
     "version": {
@@ -377,23 +465,23 @@
       "items": {
         "type": "object",
         "properties": {
-            "license": {
-              "description": "The license itself. Free text.",
-              "type": "string"
-            },
-            "uri": {
-              "description": "The URI of the license.",
-              "type": "string",
-              "format": "uri"
-            },
-            "identifier": {
-              "description": "A short, standardized version of the license name.",
-              "type": "string"
-            },
-            "scheme": {
-              "description": "The name of the scheme.",
-              "type": "string"
-            }
+          "license": {
+            "description": "The license itself. Free text.",
+            "type": "string"
+          },
+          "uri": {
+            "description": "The URI of the license.",
+            "type": "string",
+            "format": "uri"
+          },
+          "identifier": {
+            "description": "A short, standardized version of the license name.",
+            "type": "string"
+          },
+          "scheme": {
+            "description": "The name of the scheme.",
+            "type": "string"
+          }
         }
       }
     },
@@ -402,23 +490,25 @@
       "type": "array",
       "uniqueItems": true,
       "items": {
-          "type": "object",
-          "properties": {
-              "description": {
-                "description": "Description/abstract for record.",
-                "type": "string"
-              },
-              "type": {
-                "description": "Type of description.",
-                "type": "string"
-              },
-              "lang": {
-                "description": "Language of the description. ISO 639-3 language code.",
-                "type": "string",
-                "maxLength": 3
-              }
+        "type": "object",
+        "properties": {
+          "description": {
+            "description": "Description/abstract for record.",
+            "type": "string"
           },
-          "required": ["description"]
+          "type": {
+            "description": "Type of description.",
+            "type": "string"
+          },
+          "lang": {
+            "description": "Language of the description. ISO 639-3 language code.",
+            "type": "string",
+            "maxLength": 3
+          }
+        },
+        "required": [
+          "description"
+        ]
       }
     },
     "locations": {
@@ -450,7 +540,9 @@
             "type": "string"
           }
         },
-        "required": ["place"]
+        "required": [
+          "place"
+        ]
       }
     },
     "references": {
@@ -460,9 +552,15 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "reference_string": {"type": "string"},
-          "identifier": {"type": "string"},
-          "scheme": {"type": "string"}
+          "reference_string": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "scheme": {
+            "type": "string"
+          }
         }
       }
     },
@@ -472,19 +570,27 @@
           {
             "type": "array",
             "items": {
-              "type": ["boolean", "number", "string"]
+              "type": [
+                "boolean",
+                "number",
+                "string"
+              ]
             }
           },
-          {"type": "boolean"},
-          {"type": "number"},
-          {"type": "string"}
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
         ]
       },
       "description": "Configured additional metadata",
       "type": "object"
     },
-
-    
     "uuid": {
       "description": "",
       "type": "string"
@@ -572,7 +678,7 @@
     "workflow": {
       "description": "",
       "type": "string"
-    }, 
+    },
     "organisationalUnits": {
       "description": "",
       "type": "array",

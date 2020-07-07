@@ -367,40 +367,58 @@
       "extensions_keywords": {
         "type": "object",
         "properties": {
-          "key": {"type": "keyword"},
-          "value": {"type": "keyword"}
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "keyword"
+          }
         }
       },
       "extensions_texts": {
         "type": "object",
         "properties": {
-          "key": {"type": "keyword"},
-          "value": {"type": "text"}
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          }
         }
       },
       "extensions_longs": {
         "type": "object",
         "properties": {
-          "key": {"type": "keyword"},
-          "value": {"type": "long"}
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "long"
+          }
         }
       },
       "extensions_dates": {
         "type": "object",
         "properties": {
-          "key": {"type": "keyword"},
-          "value": {"type": "date"}
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "date"
+          }
         }
       },
       "extensions_booleans": {
         "type": "object",
         "properties": {
-          "key": {"type": "keyword"},
-          "value": {"type": "boolean"}
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "boolean"
+          }
         }
       },
-
-
       "uuid": {
         "type": "keyword"
       },

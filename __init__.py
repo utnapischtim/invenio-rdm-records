@@ -11,4 +11,4 @@
 from .ext import InvenioRDMRecords
 from .version import __version__
 
-__all__ = ('__version__', 'InvenioRDMRecords')
+__all__ = ("__version__", "InvenioRDMRecords")

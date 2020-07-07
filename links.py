@@ -19,9 +19,9 @@ def links_factory(pid, **kwargs):
     For now, just adds 'files' link
     """
     links = default_links_factory(pid)
-    links['files'] = url_for(
-        'invenio_records_files.recid_bucket_api',
+    links["files"] = url_for(
+        "invenio_records_files.recid_bucket_api",
         pid_value=pid.pid_value,
-        _external=True
+        _external=True,
     )
     return links

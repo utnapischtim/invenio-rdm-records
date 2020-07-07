@@ -28,20 +28,20 @@ from ..utils import is_doi_locally_managed
 from ..vocabularies import Vocabulary
 
 blueprint = Blueprint(
-    'invenio_rdm_records',
+    "invenio_rdm_records",
     __name__,
-    template_folder='templates',
-    static_folder='static',
+    template_folder="templates",
+    static_folder="static",
 )
 
 
-@blueprint.route('/coming-soon')
+@blueprint.route("/coming-soon")
 def coming_soon():
     """Route to display on soon-to-come features."""
-    return render_template('invenio_rdm_records/coming_soon_page.html')
+    return render_template("invenio_rdm_records/coming_soon_page.html")
 
 
-@blueprint.app_template_filter('to_date')
+@blueprint.app_template_filter("to_date")
 def to_date(date_string):
     """Return a Date object from a passed date string.
 
@@ -60,7 +60,7 @@ def to_date(date_string):
     return date
 
 
-@blueprint.app_template_filter('format_date')
+@blueprint.app_template_filter("format_date")
 def format_date(date, format):
     """Return a formatted Date string.
 
@@ -83,19 +83,19 @@ def select_preview_file(files):
     selected = None
 
     try:
-        for f in sorted(files or [], key=itemgetter('key')):
-            file_type = splitext(f['key'])[1][1:].lower()
+        for f in sorted(files or [], key=itemgetter("key")):
+            file_type = splitext(f["key"])[1][1:].lower()
             if is_previewable(file_type):
                 if selected is None:
                     selected = f
-                elif f['default']:
+                elif f["default"]:
                     selected = f
     except KeyError:
         pass
     return selected
 
 
-@blueprint.app_template_filter('can_list_files')
+@blueprint.app_template_filter("can_list_files")
 def can_list_files(record):
     """Permission check if current user can list files of record.
 
@@ -105,18 +105,19 @@ def can_list_files(record):
     permissions at the final serialization level (only).
     """
     PermissionPolicy = get_record_permission_policy()
-    return PermissionPolicy(action='read_files', record=record).can()
+    return PermissionPolicy(action="read_files", record=record).can()
 
 
 @blueprint.app_template_filter()
 def contributortype_title(value):
     """Get object type."""
-    return current_app.config.get('RECORD_CONTRIBUTOR_TYPES_LABELS', {}).get(
-        value, value)
+    return current_app.config.get("RECORD_CONTRIBUTOR_TYPES_LABELS", {}).get(
+        value, value
+    )
 
 
-@blueprint.app_template_filter('pid_url')
-def pid_url(identifier, scheme=None, url_scheme='https'):
+@blueprint.app_template_filter("pid_url")
+def pid_url(identifier, scheme=None, url_scheme="https"):
     """Convert persistent identifier into a link."""
     if scheme is None:
         try:
@@ -127,27 +128,29 @@ def pid_url(identifier, scheme=None, url_scheme='https'):
         if scheme and identifier:
             return idutils.to_url(identifier, scheme, url_scheme=url_scheme)
     except Exception:
-        current_app.logger.warning('URL generation for identifier {0} failed.'
-                                   .format(identifier), exc_info=True)
-    return ''
+        current_app.logger.warning(
+            "URL generation for identifier {0} failed.".format(identifier),
+            exc_info=True,
+        )
+    return ""
 
 
-@blueprint.app_template_filter('doi_identifier')
+@blueprint.app_template_filter("doi_identifier")
 def doi_identifier(identifiers):
     """Determine if DOI is managed locally."""
     for identifier in identifiers:
         # TODO: extract this "DOI" constant to a registry?
-        if identifier == 'DOI':
+        if identifier == "DOI":
             return identifiers[identifier]
 
 
-@blueprint.app_template_filter('doi_locally_managed')
+@blueprint.app_template_filter("doi_locally_managed")
 def doi_locally_managed(pid):
     """Determine if DOI is managed locally."""
     return is_doi_locally_managed(pid)
 
 
-@blueprint.app_template_filter('vocabulary_title')
+@blueprint.app_template_filter("vocabulary_title")
 def vocabulary_title(dict_key, vocabulary_key):
     """Returns formatted vocabulary-corresponding human-readable string."""
     vocabulary = Vocabulary.get_vocabulary(vocabulary_key)

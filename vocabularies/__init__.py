@@ -64,26 +64,26 @@ class ResourceTypeVocabulary(object):
         with open(self.path) as f:
             reader = csv.DictReader(f, skipinitialspace=True)
             # NOTE: We use an OrderedDict to preserve on file row order
-            self.data = OrderedDict([
-                # NOTE: unfilled cells return '' (empty string)
-                ((row['type'], row['subtype']), row)
-                for row in hierarchized_rows(reader)
-            ])
+            self.data = OrderedDict(
+                [
+                    # NOTE: unfilled cells return '' (empty string)
+                    ((row["type"], row["subtype"]), row)
+                    for row in hierarchized_rows(reader)
+                ]
+            )
 
     def get_entry_by_dict(self, type_subtype):
         """Returns a vocabulary entry as an OrderedDict."""
-        return self.data.get(
-            (type_subtype['type'], type_subtype.get('subtype', ''))
-        )
+        return self.data.get((type_subtype["type"], type_subtype.get("subtype", "")))
 
     def get_title_by_dict(self, type_subtype):
         """Returns a vocabulary entry title."""
         entry = self.get_entry_by_dict(type_subtype)
 
         # NOTE: translations could also be done via the CSV file directly
-        result = _(entry.get('type_name'))
-        if entry.get('subtype_name'):
-            subtype_name = _(entry.get('subtype_name'))
+        result = _(entry.get("type_name"))
+        if entry.get("subtype_name"):
+            subtype_name = _(entry.get("subtype_name"))
             result += " / " + subtype_name
 
         return result
@@ -92,18 +92,17 @@ class ResourceTypeVocabulary(object):
         """Returns the error message for the given dict key."""
         # TODO: Revisit with deposit to return targeted error message
         types = set([k[0] for k in self.data.keys()])
-        _type = type_subtype.get('type')
+        _type = type_subtype.get("type")
         if not _type or (_type not in types):
             _input = _type
             choices = types
         else:
-            _input = type_subtype.get('subtype')
+            _input = type_subtype.get("subtype")
             choices = set([k[1] for k in self.data.keys()])
 
         return _(
-            'Invalid resource type. {input} not one of {choices}'.format(
-                input=_input,
-                choices=choices
+            "Invalid resource type. {input} not one of {choices}".format(
+                input=_input, choices=choices
             )
         )
 
@@ -116,29 +115,29 @@ class ResourceTypeVocabulary(object):
 
         TODO: Be attentive to generalization for all vocabularies.
         """
-        options = {'type': [], 'subtype': []}
+        options = {"type": [], "subtype": []}
 
         for (_type, subtype), entry in self.data.items():
             type_option = {
-                'icon': entry.get('type_icon'),
-                'text': _(entry.get('type_name')),
-                'value': _type
+                "icon": entry.get("type_icon"),
+                "text": _(entry.get("type_name")),
+                "value": _type,
             }
 
-            if type_option not in options['type']:
-                options['type'].append(type_option)
+            if type_option not in options["type"]:
+                options["type"].append(type_option)
 
             # NOTE: There isn't always a subtype
             if subtype:
                 subtype_option = {
-                    'parent-text': type_option['text'],
-                    'parent-value': type_option['value'],
-                    'text': _(entry.get('subtype_name')),
-                    'value': subtype,
+                    "parent-text": type_option["text"],
+                    "parent-value": type_option["value"],
+                    "text": _(entry.get("subtype_name")),
+                    "value": subtype,
                 }
 
                 # These are not duplicated so we can just append
-                options['subtype'].append(subtype_option)
+                options["subtype"].append(subtype_option)
 
         return options
 
@@ -149,30 +148,25 @@ class Vocabulary(object):
     this_dir = dirname(__file__)
     vocabularies = {
         # NOTE: keys should be same as MetadataSchemaV1 fields
-        'resource_type': {
-            'path': join(this_dir, 'resource_types.csv'),
-            'class': ResourceTypeVocabulary,
-            'object': None
+        "resource_type": {
+            "path": join(this_dir, "resource_types.csv"),
+            "class": ResourceTypeVocabulary,
+            "object": None,
         }
     }
 
     @classmethod
     def get_vocabulary(cls, vocabulary_type):
         """Returns the corresponding Vocabulary object."""
-        obj = cls.vocabularies.get(vocabulary_type, {}).get('object')
+        obj = cls.vocabularies.get(vocabulary_type, {}).get("object")
         if not obj:
-            path = (
-                current_app.config
-                .get('RDM_RECORDS_CUSTOM_VOCABULARIES', {})
-                .get(vocabulary_type) or
-                cls.vocabularies
-                .get(vocabulary_type)
-                .get('path')
-            )
+            path = current_app.config.get("RDM_RECORDS_CUSTOM_VOCABULARIES", {}).get(
+                vocabulary_type
+            ) or cls.vocabularies.get(vocabulary_type).get("path")
             # Only predefined classes for now
-            VocabularyClass = cls.vocabularies[vocabulary_type]['class']
+            VocabularyClass = cls.vocabularies[vocabulary_type]["class"]
             obj = VocabularyClass(path)
-            cls.vocabularies[vocabulary_type]['object'] = obj
+            cls.vocabularies[vocabulary_type]["object"] = obj
 
         return obj
 
@@ -180,7 +174,7 @@ class Vocabulary(object):
     def clear(cls):
         """Clears loaded vocabularies."""
         for vocabulary in cls.vocabularies.values():
-            vocabulary['object'] = None
+            vocabulary["object"] = None
 
 
 def dump_vocabularies(vocabulary_singleton):
