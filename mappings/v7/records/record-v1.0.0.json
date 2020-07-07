@@ -94,14 +94,68 @@
       "_contact": {
         "type": "keyword"
       },
-      "_community": {
+      "_communities": {
         "type": "object",
         "properties": {
-          "primary": {
-            "type": "text"
+          "accepted": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "keyword"
+              },
+              "comid": {
+                "type": "keyword"
+              },
+              "title": {
+                "type": "text"
+              },
+              "request_id": {
+                "type": "keyword"
+              },
+              "created_by": {
+                "type": "integer"
+              }
+            }
           },
-          "secondary": {
-            "type": "text"
+          "pending": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "keyword"
+              },
+              "comid": {
+                "type": "keyword"
+              },
+              "title": {
+                "type": "text"
+              },
+              "request_id": {
+                "type": "keyword"
+              },
+              "created_by": {
+                "type": "integer"
+              }
+            }
+          },
+          "rejected": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "keyword"
+              },
+              "comid": {
+                "type": "keyword"
+              },
+              "title": {
+                "type": "text"
+              },
+              "request_id": {
+                "type": "keyword"
+              },
+              "created_by": {
+                "type": "integer"
+              }
+            }
           }
         }
       },
@@ -146,16 +200,10 @@
               "name": {
                 "type": "text"
               },
-              "identifier": {
-                "type": "keyword"
-              },
-              "scheme": {
-                "type": "keyword"
+              "identifiers": {
+                "type": "object"
               }
             }
-          },
-          "pure_personRole": {
-            "type": "text"
           }
         }
       },
@@ -221,11 +269,8 @@
               "name": {
                 "type": "text"
               },
-              "identifier": {
-                "type": "keyword"
-              },
-              "scheme": {
-                "type": "keyword"
+              "identifiers": {
+                "type": "object"
               }
             }
           },

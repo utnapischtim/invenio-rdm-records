@@ -11,12 +11,15 @@ import time
 from datetime import date
 
 import arrow
+import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_communities.records.api import Record, RecordCommunitiesCollection
 from invenio_records_rest.schemas import Nested
 from invenio_records_rest.schemas.fields import (
     DateString,
+    GenMethod,
     PersistentIdentifier,
     SanitizedUnicode,
 )
@@ -31,9 +34,23 @@ from marshmallow import (
 )
 from marshmallow.schema import SchemaMeta
 
-from ..vocabularies import Vocabulary
+from ..vocabularies import Vocabularies
 from .fields import EDTFLevel0DateString
 from .utils import api_link_for, validate_iso639_3
+
+
+def validate_entry(vocabulary_key, entry_key):
+    """Validates if an entry is valid for a vocabulary.
+
+    :param vocabulary_key: str, Vocabulary key
+    :param entry_key: str, specific entry key
+
+    raises marshmallow.ValidationError if entry is not valid.
+    """
+    vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
+    obj = vocabulary.get_entry_by_dict(entry_key)
+    if not obj:
+        raise ValidationError(vocabulary.get_invalid(entry_key))
 
 
 class CommunitySchemaV1(BaseSchema):
@@ -74,8 +91,19 @@ class AffiliationSchemaV1(BaseSchema):
     """Affiliation of a creator/contributor."""
 
     name = SanitizedUnicode(required=True)
-    identifier = SanitizedUnicode(required=True)
-    scheme = SanitizedUnicode(required=True)
+    identifiers = fields.Dict()
+
+    @validates("identifiers")
+    def validate_identifiers(self, value):
+        """Validate well-formed identifiers are passed."""
+        if len(value) == 0:
+            raise ValidationError(_("Invalid identifier."))
+
+        if "ror" in value:
+            if not idutils.is_ror(value.get("ror")):
+                raise ValidationError(_("Invalid identifier."))
+        else:
+            raise ValidationError(_("Invalid identifier."))
 
 
 class CreatorSchemaV1(BaseSchema):
@@ -95,44 +123,47 @@ class CreatorSchemaV1(BaseSchema):
     )
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
-    identifiers = Identifiers()
+    identifiers = fields.Dict()
     affiliations = fields.List(Nested(AffiliationSchemaV1))
-    pure_personRole = SanitizedUnicode()
+
+    @validates("identifiers")
+    def validate_identifiers(self, value):
+        """Validate well-formed identifiers are passed."""
+        if any(key not in ["Orcid", "ror"] for key in value.keys()):
+            raise ValidationError(_("Invalid identifier."))
+
+        if "Orcid" in value:
+            if not idutils.is_orcid(value.get("Orcid")):
+                raise ValidationError(_("Invalid identifier."))
+
+        if "ror" in value:
+            if not idutils.is_ror(value.get("ror")):
+                raise ValidationError(_("Invalid identifier."))
+
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate identifier based on type."""
+        if data["type"] == "Personal":
+            person_identifiers = ["Orcid"]
+            identifiers = data.get("identifiers", {}).keys()
+            if any([ident not in person_identifiers for ident in identifiers]):
+                raise ValidationError(_("Invalid identifier for a person."))
+        elif data["type"] == "Organizational":
+            org_identifiers = ["ror"]
+            identifiers = data.get("identifiers", {}).keys()
+            if any([ident not in org_identifiers for ident in identifiers]):
+                raise ValidationError(_("Invalid identifier for an organization."))
 
 
 class ContributorSchemaV1(CreatorSchemaV1):
     """Contributor schema."""
 
-    ROLES = [
-        "ContactPerson",
-        "DataCollector",
-        "DataCurator",
-        "DataManager",
-        "Distributor",
-        "Editor",
-        "HostingInstitution",
-        "Producer",
-        "ProjectLeader",
-        "ProjectManager",
-        "ProjectMember",
-        "RegistrationAgency",
-        "RegistrationAuthority",
-        "RelatedPerson",
-        "Researcher",
-        "ResearchGroup",
-        "RightsHolder",
-        "Sponsor",
-        "Supervisor",
-        "WorkPackageLeader",
-        "Other",
-    ]
+    role = SanitizedUnicode(required=True)
 
-    role = SanitizedUnicode(
-        required=True,
-        validate=validate.OneOf(
-            choices=ROLES, error=_("Invalid role. {input} not one of {choices}.")
-        ),
-    )
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate role."""
+        validate_entry("contributors.role", data)
 
 
 class FilesSchemaV1(BaseSchema):
@@ -169,33 +200,20 @@ class ResourceTypeSchemaV1(BaseSchema):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate resource type."""
-        vocabulary = Vocabulary.get_vocabulary("resource_type")
-        obj = vocabulary.get_entry_by_dict(data)
-        if not obj:
-            raise ValidationError(vocabulary.get_invalid(data))
+        validate_entry("resource_type", data)
 
 
 class TitleSchemaV1(BaseSchema):
     """Schema for the additional title."""
 
-    TITLE_TYPES = [
-        "MainTitle",
-        "AlternativeTitle",
-        "Subtitle",
-        "TranslatedTitle",
-        "Other",
-    ]
-
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    type = SanitizedUnicode(
-        required=True,
-        validate=validate.OneOf(
-            choices=TITLE_TYPES,
-            error=_("Invalid title type. {input} not one of {choices}."),
-        ),
-        default="MainTitle",
-    )
+    type = SanitizedUnicode(missing="MainTitle")
     lang = SanitizedUnicode(validate=validate_iso639_3)
+
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate type."""
+        validate_entry("titles.type", data)
 
 
 class DescriptionSchemaV1(BaseSchema):
@@ -431,20 +449,49 @@ def prepare_publication_date(record_dict):
     record_dict["_publication_date_search"] = time.strftime("%Y-%m-%d", date_tuple)
 
 
+class CommunitiesRequestV1(BaseSchema):
+    """Community Request Schema."""
+
+    id = SanitizedUnicode(required=True)
+    comid = SanitizedUnicode(required=True)
+    title = SanitizedUnicode(required=True)
+    request_id = SanitizedUnicode()
+    created_by = fields.Integer()
+    links = fields.Method("get_links")
+
+    def get_links(self, obj):
+        """Get links."""
+        res = {
+            "self": api_link_for(
+                "community_inclusion_request",
+                id=obj["comid"],
+                request_id=obj["request_id"],
+            ),
+            "community": api_link_for("community", id=obj["comid"]),
+        }
+        for action in ("accept", "reject", "comment"):
+            res[action] = api_link_for(
+                "community_inclusion_request_action",
+                id=obj["comid"],
+                request_id=obj["request_id"],
+                action=action,
+            )
+        return res
+
+
+class CommunityStatusV1(BaseSchema):
+    """Status of a community request."""
+
+    pending = fields.List(Nested(CommunitiesRequestV1))
+    accepted = fields.List(Nested(CommunitiesRequestV1))
+    rejected = fields.List(Nested(CommunitiesRequestV1))
+
+
 class PersonIdsSchemaV1(BaseSchema):
     """Ids schema."""
 
     source = SanitizedUnicode()
     value = SanitizedUnicode()
-
-
-class organisationalUnitsSchemaV1(BaseSchema):
-    """organisationalUnits schema."""
-
-    ids = fields.Nested(PersonIdsSchemaV1, many=True)
-    name = SanitizedUnicode(required=True)
-    uuid = fields.Str()
-    externalId = fields.Str()
 
 
 class VersionFilesSchemaV1(BaseSchema):
@@ -465,17 +512,19 @@ class VersionFilesSchemaV1(BaseSchema):
     accessType = fields.Str()
 
 
+class organisationalUnitsSchemaV1(BaseSchema):
+    """organisationalUnits schema."""
+
+    ids = fields.Nested(PersonIdsSchemaV1, many=True)
+    name = SanitizedUnicode(required=True)
+    uuid = fields.Str()
+    externalId = fields.Str()
+
+
 class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
     # Administrative fields
-    access_right = SanitizedUnicode(
-        required=True,
-        validate=validate.OneOf(
-            choices=["open", "embargoed", "restricted", "closed"],
-            error=_("Invalid access right. {input} not one of {choices}."),
-        ),
-    )
     _access = Nested(AccessSchemaV1, required=True)
     _owners = fields.List(
         fields.Integer, validate=validate.Length(min=1), required=True
@@ -485,10 +534,11 @@ class MetadataSchemaV1(BaseSchema):
     _files = fields.List(Nested(FilesSchemaV1, dump_only=True))
     _internal_notes = fields.List(Nested(InternalNoteSchemaV1))
     _embargo_date = DateString(data_key="embargo_date", attribute="embargo_date")
-    _community = Nested(CommunitySchemaV1, data_key="community", attribute="community")
+    _communities = GenMethod("dump_communities")
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
 
     # Metadata fields
+    access_right = SanitizedUnicode(required=True)
     identifiers = Identifiers()
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
     titles = fields.List(Nested(TitleSchemaV1), required=True)
@@ -553,6 +603,19 @@ class MetadataSchemaV1(BaseSchema):
 
         return ExtensionSchema().load(value)
 
+    def dump_communities(self, obj):
+        """Dumps communities related to the record."""
+        # NOTE: If the field is already there, it's coming from ES
+        if "_communities" in obj:
+            return CommunityStatusV1().dump(obj["_communities"])
+
+        record = self.context.get("record")
+        if record:
+            _record = Record(record, model=record.model)
+            return CommunityStatusV1().dump(
+                RecordCommunitiesCollection(_record).as_dict()
+            )
+
     @validates("_embargo_date")
     def validate_embargo_date(self, value):
         """Validate that embargo date is in the future."""
@@ -560,6 +623,12 @@ class MetadataSchemaV1(BaseSchema):
             raise ValidationError(
                 _("Embargo date must be in the future."), field_names=["embargo_date"]
             )
+
+    @validates("access_right")
+    def validate_access_right(self, value):
+        """Validate that access right is one of the allowed ones."""
+        access_right_key = {"access_right": value}
+        validate_entry("access_right", access_right_key)
 
     @post_load
     def post_load_publication_date(self, obj, **kwargs):

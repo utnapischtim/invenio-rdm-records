@@ -114,7 +114,7 @@
         ]
       }
     },
-    "_recid": {
+    "recid": {
       "description": "Invenio record identifier (alphanumeric).",
       "type": "string"
     },
@@ -161,21 +161,6 @@
     },
     "contact": {
       "type": "string"
-    },
-    "community": {
-      "type": "object",
-      "properties": {
-        "primary": {
-          "type": "string"
-        },
-        "secondary": {
-          "type": "array",
-          "minItems": 0,
-          "items": {
-            "type": "string"
-          }
-        }
-      }
     },
     "resource_type": {
       "type": "object",
@@ -238,22 +223,18 @@
                 "name": {
                   "type": "string"
                 },
-                "identifier": {
-                  "type": "string"
-                },
-                "scheme": {
-                  "type": "string"
+                "identifiers": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
                 }
               },
               "required": [
                 "name",
-                "identifier",
-                "scheme"
+                "identifiers"
               ]
             }
-          },
-          "pure_personRole": {
-            "type": "string"
           }
         },
         "required": [
@@ -354,17 +335,16 @@
                 "name": {
                   "type": "string"
                 },
-                "identifier": {
-                  "type": "string"
-                },
-                "scheme": {
-                  "type": "string"
+                "identifiers": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
                 }
               },
               "required": [
                 "name",
-                "identifier",
-                "scheme"
+                "identifiers"
               ]
             }
           },
@@ -644,6 +624,10 @@
       "type": "string"
     },
     "publisherType": {
+      "description": "",
+      "type": "string"
+    },
+    "pure_personRole": {
       "description": "",
       "type": "string"
     },

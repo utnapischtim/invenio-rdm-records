@@ -21,12 +21,12 @@ from invenio_pidstore import current_pidstore
 from invenio_records_files.api import Record
 from invenio_search import current_search
 
-from .vocabularies import Vocabulary
+from .vocabularies import Vocabularies
 
 
 def fake_resource_type():
     """Generates a fake resource_type."""
-    vocabulary = Vocabulary.get_vocabulary("resource_type")
+    vocabulary = Vocabularies.get_vocabulary("resource_type")
     _type, subtype = random.choice(list(vocabulary.data.keys()))
     return {"type": _type, "subtype": subtype}
 
@@ -81,20 +81,15 @@ def create_fake_record():
         "access_right": "open",
         "embargo_date": fake.iso8601(tzinfo=None, end_datetime=None),
         "contact": "info@inveniosoftware.org",
-        "community": {"primary": "Maincom", "secondary": ["Subcom One", "Subcom Two"]},
         "resource_type": fake_resource_type(),
         "identifiers": {"DOI": "10.9999/rdm.9999999", "arXiv": "9999.99999",},
         "creators": [
             {
                 "name": fake.name(),
                 "type": "Personal",
-                "identifiers": {"Orcid": "9999-9999-9999-9999",},
+                "identifiers": {"Orcid": "0000-0002-1825-0097",},
                 "affiliations": [
-                    {
-                        "name": fake.company(),
-                        "identifier": "entity-one",
-                        "scheme": "entity-id-scheme",
-                    }
+                    {"name": fake.company(), "identifiers": {"ror": "03yrm5c26"}}
                 ],
             }
         ],
@@ -109,13 +104,8 @@ def create_fake_record():
             {
                 "name": fake.name(),
                 "type": "Personal",
-                "identifiers": {"Orcid": "9999-9999-9999-9998",},
                 "affiliations": [
-                    {
-                        "name": fake.company(),
-                        "identifier": "entity-one",
-                        "scheme": "entity-id-scheme",
-                    }
+                    {"name": fake.company(), "identifiers": {"ror": "03yrm5c26"}}
                 ],
                 "role": "RightsHolder",
             }
