@@ -96,14 +96,15 @@ class AffiliationSchemaV1(BaseSchema):
     @validates("identifiers")
     def validate_identifiers(self, value):
         """Validate well-formed identifiers are passed."""
-        if len(value) == 0:
-            raise ValidationError(_("Invalid identifier."))
+        # if len(value) == 0:
+        #     raise ValidationError(_("Invalid identifier."))
 
-        if "ror" in value:
-            if not idutils.is_ror(value.get("ror")):
-                raise ValidationError(_("Invalid identifier."))
-        else:
-            raise ValidationError(_("Invalid identifier."))
+        # if "ror" in value:
+        #     if not idutils.is_ror(value.get("ror")):
+        #         raise ValidationError(_("Invalid identifier."))
+        # else:
+        #     raise ValidationError(_("Invalid identifier."))
+        return
 
 
 class CreatorSchemaV1(BaseSchema):
@@ -129,30 +130,34 @@ class CreatorSchemaV1(BaseSchema):
     @validates("identifiers")
     def validate_identifiers(self, value):
         """Validate well-formed identifiers are passed."""
-        if any(key not in ["Orcid", "ror"] for key in value.keys()):
-            raise ValidationError(_("Invalid identifier."))
+        # if any(key not in ['Orcid', 'ror'] for key in value.keys()):
+        #     raise ValidationError(_("Invalid identifier."))
 
-        if "Orcid" in value:
-            if not idutils.is_orcid(value.get("Orcid")):
-                raise ValidationError(_("Invalid identifier."))
+        # if 'Orcid' in value:
+        #     if not idutils.is_orcid(value.get('Orcid')):
+        #         raise ValidationError(_("Invalid identifier."))
 
-        if "ror" in value:
-            if not idutils.is_ror(value.get("ror")):
-                raise ValidationError(_("Invalid identifier."))
+        # if 'ror' in value:
+        #     if not idutils.is_ror(value.get('ror')):
+        #         raise ValidationError(_("Invalid identifier."))
+        return
 
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate identifier based on type."""
-        if data["type"] == "Personal":
-            person_identifiers = ["Orcid"]
-            identifiers = data.get("identifiers", {}).keys()
-            if any([ident not in person_identifiers for ident in identifiers]):
-                raise ValidationError(_("Invalid identifier for a person."))
-        elif data["type"] == "Organizational":
-            org_identifiers = ["ror"]
-            identifiers = data.get("identifiers", {}).keys()
-            if any([ident not in org_identifiers for ident in identifiers]):
-                raise ValidationError(_("Invalid identifier for an organization."))
+        # if data['type'] == "Personal":
+        #     person_identifiers = ['Orcid']
+        #     identifiers = data.get('identifiers', {}).keys()
+        #     if any([ident not in person_identifiers for ident in identifiers]):
+        #         raise ValidationError(_("Invalid identifier for a person."))
+        # elif data['type'] == "Organizational":
+        #     org_identifiers = ['ror']
+        #     identifiers = data.get('identifiers', {}).keys()
+        #     if any([ident not in org_identifiers for ident in identifiers]):
+        #         raise ValidationError(
+        #             _("Invalid identifier for an organization.")
+        #         )
+        return
 
 
 class ContributorSchemaV1(CreatorSchemaV1):
@@ -487,40 +492,6 @@ class CommunityStatusV1(BaseSchema):
     rejected = fields.List(Nested(CommunitiesRequestV1))
 
 
-class PersonIdsSchemaV1(BaseSchema):
-    """Ids schema."""
-
-    source = SanitizedUnicode()
-    value = SanitizedUnicode()
-
-
-class VersionFilesSchemaV1(BaseSchema):
-    """versionFiles schema."""
-
-    ids = fields.Nested(PersonIdsSchemaV1, many=True)
-    name = fields.Str()
-    internalReview = fields.Bool()
-    internalReviewBy = fields.Str()
-    internalReviewDate = fields.Str()
-    version = fields.Integer()
-    createdBy = fields.Str()
-    createdDate = fields.Str()
-    digest = fields.Str()
-    digestAlgorithm = fields.Str()
-    versionType = fields.Str()
-    licenseType = fields.Str()
-    accessType = fields.Str()
-
-
-class organisationalUnitsSchemaV1(BaseSchema):
-    """organisationalUnits schema."""
-
-    ids = fields.Nested(PersonIdsSchemaV1, many=True)
-    name = SanitizedUnicode(required=True)
-    uuid = fields.Str()
-    externalId = fields.Str()
-
-
 class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
@@ -539,6 +510,7 @@ class MetadataSchemaV1(BaseSchema):
 
     # Metadata fields
     access_right = SanitizedUnicode(required=True)
+    applied_restrictions = fields.List(SanitizedUnicode())  # TU Graz restrictions
     identifiers = Identifiers()
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
     titles = fields.List(Nested(TitleSchemaV1), required=True)
@@ -556,29 +528,6 @@ class MetadataSchemaV1(BaseSchema):
     locations = fields.List(Nested(LocationSchemaV1))
     references = fields.List(Nested(ReferenceSchemaV1))
     extensions = fields.Method("dump_extensions", "load_extensions")
-
-    uuid = fields.Str()
-    recordReview = fields.Str()
-    appliedRestrictions = fields.List(fields.Str())
-    groupRestrictions = fields.List(fields.Str())
-    peerReview = fields.Bool()
-    publicationStatus = fields.Str()
-    managingOrganisationalUnit_name = fields.Str()
-    managingOrganisationalUnit_uuid = fields.Str()
-    managingOrganisationalUnit_externalId = fields.Str()
-    publisherName = fields.Str()
-    publisherUuid = fields.Str()
-    publisherType = fields.Str()
-    pages = fields.Str()
-    volume = fields.Str()
-    journalTitle = fields.Str()
-    journalNumber = fields.Str()
-    pure_link = fields.Str()
-    pure_type = fields.Str()
-    pure_category = fields.Str()
-    workflow = fields.Str()
-    versionFiles = Nested(VersionFilesSchemaV1, many=True)
-    organisationalUnits = Nested(organisationalUnitsSchemaV1, many=True)
 
     def dump_extensions(self, obj):
         """Dumps the extensions value.

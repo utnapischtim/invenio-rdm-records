@@ -14,6 +14,9 @@
           }
         }
       },
+      "applied_restrictions": {
+        "type": "object"
+      },
       "_bucket": {
         "enabled": false
       },
@@ -461,148 +464,6 @@
           },
           "value": {
             "type": "boolean"
-          }
-        }
-      },
-      "uuid": {
-        "type": "keyword"
-      },
-      "recordReview": {
-        "type": "text"
-      },
-      "appliedRestrictions": {
-        "type": "text"
-      },
-      "groupRestrictions": {
-        "type": "text"
-      },
-      "peerReview": {
-        "type": "boolean"
-      },
-      "publicationStatus": {
-        "type": "text"
-      },
-      "managingOrganisationalUnit_name": {
-        "type": "text"
-      },
-      "managingOrganisationalUnit_uuid": {
-        "type": "text"
-      },
-      "managingOrganisationalUnit_externalId": {
-        "type": "text"
-      },
-      "publisherName": {
-        "type": "text"
-      },
-      "publisherUuid": {
-        "type": "text"
-      },
-      "publisherType": {
-        "type": "text"
-      },
-      "pages": {
-        "type": "text"
-      },
-      "volume": {
-        "type": "text"
-      },
-      "journalTitle": {
-        "type": "text"
-      },
-      "journalNumber": {
-        "type": "text"
-      },
-      "pure_link": {
-        "type": "text"
-      },
-      "pure_type": {
-        "type": "text"
-      },
-      "pure_category": {
-        "type": "text"
-      },
-      "workflow": {
-        "type": "text"
-      },
-      "organisationalUnits": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "object",
-            "properties": {
-              "source": {
-                "type": "text"
-              },
-              "value": {
-                "type": "keyword"
-              }
-            }
-          },
-          "name": {
-            "type": "text"
-          },
-          "uuid": {
-            "type": "text"
-          },
-          "externalId": {
-            "type": "text"
-          }
-        }
-      },
-      "versionFiles": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "object",
-            "properties": {
-              "source": {
-                "type": "text",
-                "fields": {
-                  "keyword": {
-                    "type": "keyword"
-                  }
-                }
-              },
-              "value": {
-                "type": "keyword"
-              }
-            }
-          },
-          "name": {
-            "type": "text"
-          },
-          "internalReview": {
-            "type": "boolean"
-          },
-          "internalReviewBy": {
-            "type": "text"
-          },
-          "internalReviewDate": {
-            "type": "text"
-          },
-          "version": {
-            "type": "integer"
-          },
-          "createdBy": {
-            "type": "text"
-          },
-          "createdDate": {
-            "type": "text"
-          },
-          "digest": {
-            "type": "text"
-          },
-          "digestAlgorithm": {
-            "type": "text"
-          },
-          "versionType": {
-            "type": "text"
-          },
-          "licenseType": {
-            "type": "text"
-          },
-          "accessType": {
-            "type": "text"
           }
         }
       }
