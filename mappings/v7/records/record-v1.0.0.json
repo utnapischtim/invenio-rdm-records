@@ -17,6 +17,9 @@
       "applied_restrictions": {
         "type": "object"
       },
+      "group_restrictions": {
+        "type": "object"
+      },
       "_bucket": {
         "enabled": false
       },

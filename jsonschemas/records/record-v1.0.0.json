@@ -25,6 +25,10 @@
       "description": "TU Graz restrictions.",
       "type": "array"
     },
+    "group_restrictions": {
+      "description": "TU Graz group restrictions.",
+      "type": "array"
+    },
     "_bucket": {
       "description": "Record bucket.",
       "type": "string"

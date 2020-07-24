@@ -511,6 +511,7 @@ class MetadataSchemaV1(BaseSchema):
     # Metadata fields
     access_right = SanitizedUnicode(required=True)
     applied_restrictions = fields.List(SanitizedUnicode())  # TU Graz restrictions
+    group_restrictions = fields.List(SanitizedUnicode())  # TU Graz group restrictions
     identifiers = Identifiers()
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
     titles = fields.List(Nested(TitleSchemaV1), required=True)
