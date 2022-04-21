@@ -30,9 +30,9 @@ class UsersFixture(FixtureMixin):
         """Retrieve password associated with email."""
         # when the user's password is set in the configuration, then
         # this overrides everything else
-        password = current_app.config.get(
-            "RDM_RECORDS_USER_FIXTURE_PASSWORDS", {}
-        ).get(email)
+        password = current_app.config.get("RDM_RECORDS_USER_FIXTURE_PASSWORDS", {}).get(
+            email
+        )
 
         if not password:
             # for auto-generated passwords use letters, digits,
@@ -64,6 +64,4 @@ class UsersFixture(FixtureMixin):
 
             db.session.commit()
         except IntegrityError:
-            current_app.logger.info(
-                f"skipping creation of {email}, already existing"
-            )
+            current_app.logger.info(f"skipping creation of {email}, already existing")

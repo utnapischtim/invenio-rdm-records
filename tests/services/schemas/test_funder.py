@@ -17,22 +17,17 @@ def test_valid_full():
     valid_full = {
         "name": "Someone",
         "identifier": "10.5281/zenodo.9999999",
-        "scheme": "doi"
+        "scheme": "doi",
     }
     assert valid_full == FunderSchema().load(valid_full)
 
 
 def test_valid_minimal():
-    valid_minimal = {
-        "name": "Someone"
-    }
+    valid_minimal = {"name": "Someone"}
     assert valid_minimal == FunderSchema().load(valid_minimal)
 
 
 def test_invalid_no_name():
-    invalid_no_name = {
-        "identifier": "10.5281/zenodo.9999999",
-        "scheme": "doi"
-    }
+    invalid_no_name = {"identifier": "10.5281/zenodo.9999999", "scheme": "doi"}
     with pytest.raises(ValidationError):
         data = FunderSchema().load(invalid_no_name)

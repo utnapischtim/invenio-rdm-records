@@ -13,8 +13,7 @@ import random
 from celery import shared_task
 from flask import current_app
 from flask_principal import Identity, UserNeed
-from invenio_access.permissions import any_user, authenticated_user, \
-    system_identity
+from invenio_access.permissions import any_user, authenticated_user, system_identity
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.api import Member
@@ -74,9 +73,9 @@ def _get_random_community(communities):
     members = current_communities.service.members
     Member.index.refresh()
     res = members.search(system_identity, uuid, role="owner").to_dict()
-    owner_id = int(res['hits']['hits'][0]['member']['id'])
+    owner_id = int(res["hits"]["hits"][0]["member"]["id"])
     owner_identity = get_authenticated_identity(owner_id)
-    owner_identity.provides.add(CommunityRoleNeed(uuid, 'owner'))
+    owner_identity.provides.add(CommunityRoleNeed(uuid, "owner"))
     return uuid, owner_id, owner_identity
 
 
@@ -96,24 +95,23 @@ def create_demo_inclusion_requests(user_id, n_requests):
     communities = comm_results.to_dict()["hits"]["hits"]
 
     user_identity = get_authenticated_identity(user_id)
-    results = current_rdm_records_service.search_drafts(user_identity,
-                                                        is_published=False,
-                                                        q="versions.index:1")
+    results = current_rdm_records_service.search_drafts(
+        user_identity, is_published=False, q="versions.index:1"
+    )
     drafts = results.to_dict()["hits"]["hits"]
 
     for _ in range(n_requests):
-        community_uuid, _, comm_owner_identity = \
-            _get_random_community(communities)
+        community_uuid, _, comm_owner_identity = _get_random_community(communities)
 
         # get a random draft
-        r = random.randint(0, len(drafts)-1)
+        r = random.randint(0, len(drafts) - 1)
         draft_id = drafts[r]["id"]
 
         # create the request in `draft` state and update the draft record
         # with the `community-submission` review in the parent
         data = {
             "type": CommunitySubmission.type_id,
-            "receiver": {"community": community_uuid}
+            "receiver": {"community": community_uuid},
         }
 
         # ensure this draft does not have a review yet
@@ -130,24 +128,25 @@ def create_demo_inclusion_requests(user_id, n_requests):
         _add_comments_to_request(req, user_identity, comm_owner_identity)
 
         # Randomly set if the request should be open, or an action happened
-        _action, _identity = random.choice([
-            (None, None),
-            ("cancel", user_identity),
-            ("accept", comm_owner_identity),
-            ("decline", comm_owner_identity),
-            ("expire", system_identity)
-        ])
+        _action, _identity = random.choice(
+            [
+                (None, None),
+                ("cancel", user_identity),
+                ("accept", comm_owner_identity),
+                ("decline", comm_owner_identity),
+                ("expire", system_identity),
+            ]
+        )
         if _action:
             _, comment_with_type = create_fake_comment()
             current_requests_service.execute_action(
-                _identity,
-                req.id,
-                _action,
-                comment_with_type
+                _identity, req.id, _action, comment_with_type
             )
 
-        print(f"Created request {req.id} and action {_action} "
-              f"for community {community_uuid}")
+        print(
+            f"Created request {req.id} and action {_action} "
+            f"for community {community_uuid}"
+        )
 
 
 @shared_task
@@ -159,8 +158,9 @@ def create_demo_invitation_requests(user_id, n_requests):
     role_names = list(current_app.config["COMMUNITIES_ROLES"].keys())
 
     for _ in range(n_requests):
-        community_uuid, comm_owner_id, comm_owner_identity = \
-            _get_random_community(communities)
+        community_uuid, comm_owner_id, comm_owner_identity = _get_random_community(
+            communities
+        )
         random_role = random.choice(role_names)
         invitation_data = {
             "members": [
@@ -198,5 +198,4 @@ def create_demo_invitation_requests(user_id, n_requests):
         #         comment_with_type
         #     )
 
-        print(f"Created request for user {user_id} and "
-              f"community {community_uuid}")
+        print(f"Created request for user {user_id} and " f"community {community_uuid}")

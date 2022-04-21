@@ -49,21 +49,17 @@ class IfRestricted(Generator):
             # TODO - when permissions on links are checked, the record is not
             # passes properly, causing below ``record.access`` to fail.
             return self.else_
-        is_restricted = getattr(
-            record.access.protection, self.field, "restricted")
+        is_restricted = getattr(record.access.protection, self.field, "restricted")
         return self.then_ if is_restricted == "restricted" else self.else_
 
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
-        needs = [
-            g.needs(record=record, **kwargs) for g in self.generators(record)]
+        needs = [g.needs(record=record, **kwargs) for g in self.generators(record)]
         return set(chain.from_iterable(needs))
 
     def excludes(self, record=None, **kwargs):
         """Set of Needs denying permission."""
-        needs = [
-            g.excludes(record=record, **kwargs) for g in self.generators(
-                record)]
+        needs = [g.excludes(record=record, **kwargs) for g in self.generators(record)]
         return set(chain.from_iterable(needs))
 
     def make_query(self, generators, **kwargs):
@@ -99,9 +95,7 @@ class RecordOwners(Generator):
             # this should be allowed for any authenticated user
             return [authenticated_user]
 
-        return [
-            UserNeed(owner.owner_id) for owner in record.parent.access.owners
-        ]
+        return [UserNeed(owner.owner_id) for owner in record.parent.access.owners]
 
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as owner."""
@@ -132,21 +126,26 @@ class IfDraft(Generator):
 
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
-        return list(set(chain.from_iterable(
-            [
-                g.needs(record=record, **kwargs)
-                for g in self._generators(record)
-            ]
-        )))
+        return list(
+            set(
+                chain.from_iterable(
+                    [g.needs(record=record, **kwargs) for g in self._generators(record)]
+                )
+            )
+        )
 
     def excludes(self, record=None, **kwargs):
         """Set of Needs denying permission."""
-        return list(set(chain.from_iterable(
-            [
-                g.excludes(record=record, **kwargs)
-                for g in self._generators(record)
-            ]
-        )))
+        return list(
+            set(
+                chain.from_iterable(
+                    [
+                        g.excludes(record=record, **kwargs)
+                        for g in self._generators(record)
+                    ]
+                )
+            )
+        )
 
 
 class SecretLinks(Generator):
@@ -165,9 +164,7 @@ class SecretLinks(Generator):
 
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity secret links."""
-        secret_links = [
-            n.value for n in identity.provides if n.method == "link"
-        ]
+        secret_links = [n.value for n in identity.provides if n.method == "link"]
 
         if secret_links:
             return Q("terms", **{"parent.access.links.id": secret_links})
@@ -199,7 +196,4 @@ class CommunityCurator(Generator):
         if record is None:
             return []
 
-        return [
-            CommunityRoleNeed(c, 'owner')
-            for c in record.parent.communities.ids
-        ]
+        return [CommunityRoleNeed(c, "owner") for c in record.parent.communities.ids]

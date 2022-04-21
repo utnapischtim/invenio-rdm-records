@@ -43,6 +43,4 @@ class OAIPMHSetSpecAlreadyExistsError(OAIPMHError):
 
     def __init__(self, spec):
         """Initialise error."""
-        super().__init__(
-            description=_(f"A set with spec '{spec}' already exists.")
-        )
+        super().__init__(description=_(f"A set with spec '{spec}' already exists."))

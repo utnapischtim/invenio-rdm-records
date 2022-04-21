@@ -24,8 +24,7 @@ For instance:
 from flask_babelex import gettext as _
 from invenio_records.systemfields import SystemField
 
-from invenio_rdm_records.services.errors import RDMRecordsException, \
-    ReviewStateError
+from invenio_rdm_records.services.errors import RDMRecordsException, ReviewStateError
 
 
 class DraftStatus(SystemField):

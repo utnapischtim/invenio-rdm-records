@@ -18,7 +18,7 @@ def test_valid_full():
         "title": "Some award",
         "number": "100",
         "identifier": "10.5281/zenodo.9999999",
-        "scheme": "doi"
+        "scheme": "doi",
     }
     assert valid_full == AwardSchema().load(valid_full)
 
@@ -35,7 +35,7 @@ def test_invalid_no_title():
     invalid_no_title = {
         "number": "100",
         "identifier": "10.5281/zenodo.9999999",
-        "scheme": "doi"
+        "scheme": "doi",
     }
     with pytest.raises(ValidationError):
         data = AwardSchema().load(invalid_no_title)
@@ -45,7 +45,7 @@ def test_invalid_no_number():
     invalid_no_number = {
         "title": "Some award",
         "identifier": "10.5281/zenodo.9999999",
-        "scheme": "doi"
+        "scheme": "doi",
     }
     with pytest.raises(ValidationError):
         data = AwardSchema().load(invalid_no_number)

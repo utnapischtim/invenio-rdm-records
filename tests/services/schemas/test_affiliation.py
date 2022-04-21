@@ -21,17 +21,12 @@ def test_valid_id():
 
 
 def test_valid_name():
-    valid_name = {
-        "name": "Entity One"
-    }
+    valid_name = {"name": "Entity One"}
     assert valid_name == AffiliationSchema().load(valid_name)
 
 
 def test_valid_both_id_name():
-    valid_id_name = {
-        "id": "test",
-        "name": "Entity One"
-    }
+    valid_id_name = {"id": "test", "name": "Entity One"}
     assert valid_id_name == AffiliationSchema().load(valid_id_name)
 
 

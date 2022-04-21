@@ -13,17 +13,17 @@ from flask_sqlalchemy import Pagination
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import Service
 from invenio_records_resources.services.base import LinksTemplate
-from invenio_records_resources.services.records.schema import \
-    ServiceSchemaWrapper
+from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import text
 
-from invenio_rdm_records.oaiserver.services.errors import \
-    OAIPMHSetDoesNotExistError, OAIPMHSetIDDoesNotExistError, \
-    OAIPMHSetSpecAlreadyExistsError
-from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, \
-    OAISetDeleteOp
+from invenio_rdm_records.oaiserver.services.errors import (
+    OAIPMHSetDoesNotExistError,
+    OAIPMHSetIDDoesNotExistError,
+    OAIPMHSetSpecAlreadyExistsError,
+)
+from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDeleteOp
 
 
 class OAIPMHServerService(Service):
@@ -61,7 +61,7 @@ class OAIPMHServerService(Service):
     @unit_of_work()
     def create(self, identity, data, uow=None):
         """Create a new OAI set."""
-        self.require_permission(identity, 'create')
+        self.require_permission(identity, "create")
         valid_data, errors = self.schema.load(
             data,
             context={"identity": identity},
@@ -69,9 +69,7 @@ class OAIPMHServerService(Service):
         )
 
         new_set = OAISet(**valid_data)
-        existing_set, errors = self._get_one(
-            spec=new_set.spec, raise_error=False
-        )
+        existing_set, errors = self._get_one(spec=new_set.spec, raise_error=False)
         if existing_set:
             raise OAIPMHSetSpecAlreadyExistsError(new_set.spec)
 
@@ -85,7 +83,7 @@ class OAIPMHServerService(Service):
 
     def read(self, identity, id_):
         """Read the OAI set."""
-        self.require_permission(identity, 'read')
+        self.require_permission(identity, "read")
         oai_set, errors = self._get_one(id=id_)
 
         return self.result_item(
@@ -97,14 +95,12 @@ class OAIPMHServerService(Service):
 
     def search(self, identity, params):
         """Perform search over OAI sets."""
-        self.require_permission(identity, 'read')
+        self.require_permission(identity, "read")
 
         search_params = self._get_search_params(params)
 
         oai_sets = OAISet.query.order_by(
-            search_params["sort_direction"](
-                text(",".join(search_params["sort"]))
-            )
+            search_params["sort_direction"](text(",".join(search_params["sort"])))
         ).paginate(
             page=search_params["page"],
             per_page=search_params["size"],
@@ -116,16 +112,14 @@ class OAIPMHServerService(Service):
             identity,
             oai_sets,
             params=search_params,
-            links_tpl=LinksTemplate(
-                self.config.links_search, context={"args": params}
-            ),
+            links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
             links_item_tpl=self.links_item_tpl,
         )
 
     @unit_of_work()
     def update(self, identity, id_, data, uow=None):
         """Update an OAI set."""
-        self.require_permission(identity, 'update')
+        self.require_permission(identity, "update")
         oai_set, errors = self._get_one(id=id_)
 
         valid_data, errors = self.schema.load(
@@ -148,7 +142,7 @@ class OAIPMHServerService(Service):
     @unit_of_work()
     def delete(self, identity, id_, uow=None):
         """Delete an OAI set."""
-        self.require_permission(identity, 'delete')
+        self.require_permission(identity, "delete")
         oai_set, errors = self._get_one(id=id_)
         uow.register(OAISetDeleteOp(oai_set))
 
@@ -156,16 +150,14 @@ class OAIPMHServerService(Service):
 
     def read_all_formats(self, identity):
         """Read available metadata formats."""
-        self.require_permission(identity, 'read_format')
+        self.require_permission(identity, "read_format")
         formats = [
             {
                 "id": k,
                 "schema": v.get("schema", None),
                 "namespace": v.get("namespace", None),
             }
-            for k, v in current_app.config.get(
-                'OAISERVER_METADATA_FORMATS'
-            ).items()
+            for k, v in current_app.config.get("OAISERVER_METADATA_FORMATS").items()
         ]
 
         results = Pagination(
@@ -189,9 +181,7 @@ class OAIPMHServerService(Service):
         page = params.get("page", 1)
         size = params.get(
             "size",
-            self.config.search.pagination_options.get(
-                "default_results_per_page"
-            ),
+            self.config.search.pagination_options.get("default_results_per_page"),
         )
 
         _search_cls = self.config.search
@@ -203,15 +193,12 @@ class OAIPMHServerService(Service):
         )
         _sort_direction_name = (
             params.get("sort_direction")
-            if params.get("sort_direction")
-            in _search_cls.sort_direction_options
+            if params.get("sort_direction") in _search_cls.sort_direction_options
             else _search_cls.sort_direction_default
         )
 
         sort = _search_cls.sort_options.get(_sort_name)
-        sort_direction = _search_cls.sort_direction_options.get(
-            _sort_direction_name
-        )
+        sort_direction = _search_cls.sort_direction_options.get(_sort_direction_name)
 
         return {
             "page": page,

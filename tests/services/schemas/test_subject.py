@@ -22,18 +22,12 @@ def test_valid_id():
 
 
 def test_valid_subject():
-    valid_subject = {
-        "subject": "Entity One"
-    }
+    valid_subject = {"subject": "Entity One"}
     assert valid_subject == SubjectSchema().load(valid_subject)
 
 
 def test_valid_full():
-    valid_subject = {
-        "id": "test",
-        "subject": "Entity One",
-        "scheme": "MeSH"
-    }
+    valid_subject = {"id": "test", "subject": "Entity One", "scheme": "MeSH"}
     assert valid_subject == SubjectSchema().load(valid_subject)
 
 

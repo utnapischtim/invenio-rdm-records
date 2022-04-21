@@ -49,8 +49,7 @@ class CSLJSONSchema(Schema):
     type_ = fields.Method("get_type", data_key="type")
     title = SanitizedUnicode(attribute="metadata.title")
     abstract = StrippedHTML(attribute="metadata.description")
-    author = fields.List(fields.Nested(CSLCreatorSchema),
-                         attribute="metadata.creators")
+    author = fields.List(fields.Nested(CSLCreatorSchema), attribute="metadata.creators")
     issued = fields.Method("get_issued")
     language = fields.Method("get_language")
     version = SanitizedUnicode(attribute="metadata.version")
@@ -68,8 +67,7 @@ class CSLJSONSchema(Schema):
     def get_type(self, obj):
         """Get resource type."""
         resource_type = obj["metadata"].get(
-            "resource_type",
-            {"id": "publication-article"}
+            "resource_type", {"id": "publication-article"}
         )
 
         resource_type_record = self._read_resource_type(resource_type["id"])

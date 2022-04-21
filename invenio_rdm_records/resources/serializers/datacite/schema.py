@@ -15,13 +15,11 @@ from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from marshmallow import Schema, ValidationError, fields, missing, post_dump, \
-    validate
+from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
 
-from invenio_rdm_records.resources.serializers.ui.schema import \
-    current_default_locale
+from invenio_rdm_records.resources.serializers.ui.schema import current_default_locale
 
 from ..utils import get_vocabulary_props
 
@@ -36,11 +34,11 @@ class PersonOrOrgSchema43(Schema):
     """Creator/contributor common schema for v4."""
 
     name = fields.Str(attribute="person_or_org.name")
-    nameType = fields.Method('get_name_type', attribute="person_or_org.type")
+    nameType = fields.Method("get_name_type", attribute="person_or_org.type")
     givenName = fields.Str(attribute="person_or_org.given_name")
     familyName = fields.Str(attribute="person_or_org.family_name")
-    nameIdentifiers = fields.Method('get_name_identifiers')
-    affiliation = fields.Method('get_affiliation')
+    nameIdentifiers = fields.Method("get_name_identifiers")
+    affiliation = fields.Method("get_affiliation")
 
     def get_name_type(self, obj):
         """Get name type."""
@@ -54,7 +52,9 @@ class PersonOrOrgSchema43(Schema):
         for identifier in identifiers:
             scheme = identifier["scheme"]
             id_scheme = get_scheme_datacite(
-                scheme, "RDM_RECORDS_PERSONORG_SCHEMES", default=scheme,
+                scheme,
+                "RDM_RECORDS_PERSONORG_SCHEMES",
+                default=scheme,
             )
 
             if id_scheme:
@@ -82,14 +82,10 @@ class PersonOrOrgSchema43(Schema):
                 ids.append(id_)
             else:
                 # if no id, name is mandatory
-                serialized_affiliations.append(
-                    {"name": affiliation["name"]}
-                )
+                serialized_affiliations.append({"name": affiliation["name"]})
 
         if ids:
-            affiliations_service = (
-                current_service_registry.get("affiliations")
-            )
+            affiliations_service = current_service_registry.get("affiliations")
             affiliations = affiliations_service.read_many(system_identity, ids)
 
             for affiliation in affiliations:
@@ -103,7 +99,7 @@ class PersonOrOrgSchema43(Schema):
                     id_scheme = get_scheme_datacite(
                         identifier["scheme"],
                         "VOCABULARIES_AFFILIATION_SCHEMES",
-                        default=identifier["scheme"]
+                        default=identifier["scheme"],
                     )
 
                     if id_scheme:
@@ -133,7 +129,7 @@ class CreatorSchema43(PersonOrOrgSchema43):
 class ContributorSchema43(PersonOrOrgSchema43):
     """Contributor schema for v43."""
 
-    contributorType = fields.Method('get_role')
+    contributorType = fields.Method("get_role")
 
     def get_role(self, obj):
         """Get datacite role."""
@@ -142,8 +138,9 @@ class ContributorSchema43(PersonOrOrgSchema43):
             return missing
 
         props = get_vocabulary_props(
-            'contributorsroles', ['props.datacite'], role["id"])
-        return props.get('datacite', '')
+            "contributorsroles", ["props.datacite"], role["id"]
+        )
+        return props.get("datacite", "")
 
 
 class SubjectSchema43(Schema):
@@ -159,7 +156,7 @@ class FundingSchema43(Schema):
 
     funderName = fields.Str(attribute="funder.name")
     funderIdentifier = fields.Str(attribute="funder.identifier")
-    funderIdentifierType = fields.Method('get_identifier_type')
+    funderIdentifierType = fields.Method("get_identifier_type")
     awardTitle = fields.Str(attribute="award.title")
     awardNumber = fields.Str(attribute="award.number")
     # PIDS-FIXME: URI should be processed depending on the schema
@@ -185,39 +182,42 @@ class DataCite43Schema(Schema):
     """DataCite JSON 4.3 Marshmallow Schema."""
 
     # PIDS-FIXME: What about versioning links and related ids
-    types = fields.Method('get_type')
-    titles = fields.Method('get_titles')
+    types = fields.Method("get_type")
+    titles = fields.Method("get_titles")
     creators = fields.List(
-        fields.Nested(CreatorSchema43), attribute='metadata.creators')
+        fields.Nested(CreatorSchema43), attribute="metadata.creators"
+    )
     contributors = fields.List(
-        fields.Nested(ContributorSchema43), attribute='metadata.contributors')
-    publisher = fields.Str(attribute='metadata.publisher')
+        fields.Nested(ContributorSchema43), attribute="metadata.contributors"
+    )
+    publisher = fields.Str(attribute="metadata.publisher")
     publicationYear = fields.Method("get_publication_year")
     subjects = fields.Method("get_subjects")
-    dates = fields.Method('get_dates')
-    language = fields.Method('get_language')
-    identifiers = fields.Method('get_identifiers')
-    relatedIdentifiers = fields.Method('get_related_identifiers')
+    dates = fields.Method("get_dates")
+    language = fields.Method("get_language")
+    identifiers = fields.Method("get_identifiers")
+    relatedIdentifiers = fields.Method("get_related_identifiers")
     sizes = fields.List(SanitizedUnicode(), attribute="metadata.sizes")
     formats = fields.List(SanitizedUnicode(), attribute="metadata.formats")
     version = SanitizedUnicode(attribute="metadata.version")
-    rightsList = fields.Method('get_rights')
-    descriptions = fields.Method('get_descriptions')
+    rightsList = fields.Method("get_rights")
+    descriptions = fields.Method("get_descriptions")
     geoLocations = fields.Method("get_locations")
     fundingReferences = fields.List(
-        fields.Nested(FundingSchema43), attribute='metadata.funding')
+        fields.Nested(FundingSchema43), attribute="metadata.funding"
+    )
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")
 
     def get_type(self, obj):
         """Get resource type."""
         props = get_vocabulary_props(
-            'resourcetypes',
-            ['props.datacite_general', 'props.datacite_type'],
+            "resourcetypes",
+            ["props.datacite_general", "props.datacite_type"],
             obj["metadata"]["resource_type"]["id"],
         )
         return {
-            'resourceTypeGeneral': props.get("datacite_general", "Other"),
-            'resourceType': props.get("datacite_type", ""),
+            "resourceTypeGeneral": props.get("datacite_general", "Other"),
+            "resourceType": props.get("datacite_type", ""),
         }
 
     def _merge_main_and_additional(self, obj, field, default_type=None):
@@ -239,7 +239,8 @@ class DataCite43Schema(Schema):
             type_id = v.get("type", {}).get("id")
             if type_id:
                 props = get_vocabulary_props(
-                    f"{field}types", ["props.datacite"], type_id)
+                    f"{field}types", ["props.datacite"], type_id
+                )
                 if "datacite" in props:
                     item[f"{field}Type"] = props["datacite"]
 
@@ -270,24 +271,21 @@ class DataCite43Schema(Schema):
             return str(parsed_date.lower_strict().tm_year)
         except ParseException:
             # Should not fail since it was validated at service schema
-            current_app.logger.error("Error parsing publication_date field for"
-                                     f"record {obj['metadata']}")
+            current_app.logger.error(
+                "Error parsing publication_date field for" f"record {obj['metadata']}"
+            )
             raise ValidationError(_("Invalid publication date value."))
 
     def get_dates(self, obj):
         """Get dates."""
-        dates = [{
-            "date": obj["metadata"]["publication_date"],
-            "dateType": "Issued"
-        }]
+        dates = [{"date": obj["metadata"]["publication_date"], "dateType": "Issued"}]
 
         for date in obj["metadata"].get("dates", []):
             date_type_id = date.get("type", {}).get("id")
-            props = get_vocabulary_props(
-                'datetypes', ["props.datacite"], date_type_id)
+            props = get_vocabulary_props("datetypes", ["props.datacite"], date_type_id)
             to_append = {
                 "date": date["date"],
-                "dateType": props.get("datacite", "Other")
+                "dateType": props.get("datacite", "Other"),
             }
             desc = date.get("description")
             if desc:
@@ -314,14 +312,18 @@ class DataCite43Schema(Schema):
         pids = obj["pids"]
         for scheme, id_ in pids.items():
             id_scheme = get_scheme_datacite(
-                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme,
+                scheme,
+                "RDM_RECORDS_IDENTIFIERS_SCHEMES",
+                default=scheme,
             )
 
             if id_scheme:
-                serialized_identifiers.append({
-                    "identifier": id_["identifier"],
-                    "identifierType": id_scheme,
-                })
+                serialized_identifiers.append(
+                    {
+                        "identifier": id_["identifier"],
+                        "identifierType": id_scheme,
+                    }
+                )
 
         # Identifiers field
         identifiers = obj["metadata"].get("identifiers", [])
@@ -334,11 +336,13 @@ class DataCite43Schema(Schema):
                 # DataCite only accepts a DOI identifier that is the official
                 # registered DOI - ones in the alternate identifier field are
                 # dropped
-                if id_scheme != 'DOI':
-                    serialized_identifiers.append({
-                        "identifier": id_["identifier"],
-                        "identifierType": id_scheme,
-                    })
+                if id_scheme != "DOI":
+                    serialized_identifiers.append(
+                        {
+                            "identifier": id_["identifier"],
+                            "identifierType": id_scheme,
+                        }
+                    )
 
         return serialized_identifiers or missing
 
@@ -350,11 +354,14 @@ class DataCite43Schema(Schema):
         for rel_id in identifiers:
             relation_type_id = rel_id.get("relation_type", {}).get("id")
             props = get_vocabulary_props(
-                "relationtypes", ["props.datacite"], relation_type_id)
+                "relationtypes", ["props.datacite"], relation_type_id
+            )
 
             scheme = rel_id["scheme"]
             id_scheme = get_scheme_datacite(
-                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme,
+                scheme,
+                "RDM_RECORDS_IDENTIFIERS_SCHEMES",
+                default=scheme,
             )
 
             if id_scheme:
@@ -371,10 +378,11 @@ class DataCite43Schema(Schema):
                         # Cache is on both keys so query datacite_type as well
                         # even though it's not accessed.
                         ["props.datacite_general", "props.datacite_type"],
-                        resource_type_id
+                        resource_type_id,
                     )
                     serialized_identifier["resourceTypeGeneral"] = props.get(
-                        "datacite_general", "Other")
+                        "datacite_general", "Other"
+                    )
 
                 serialized_identifiers.append(serialized_identifier)
 
@@ -420,9 +428,7 @@ class DataCite43Schema(Schema):
                 ids.append(subject.get("id"))
 
         if ids:
-            subjects_service = (
-                current_service_registry.get("subjects")
-            )
+            subjects_service = current_service_registry.get("subjects")
             subjects = subjects_service.read_many(system_identity, ids)
             validator = validate.URL()
             for subject in subjects:
@@ -456,9 +462,7 @@ class DataCite43Schema(Schema):
                 ids.append(_id)
             else:
                 serialized_right = {
-                    "rights": right.get("title").get(
-                        current_default_locale()
-                    ),
+                    "rights": right.get("title").get(current_default_locale()),
                 }
 
                 link = right.get("link")
@@ -468,14 +472,10 @@ class DataCite43Schema(Schema):
                 serialized_rights.append(serialized_right)
 
         if ids:
-            rights = vocabulary_service.read_many(
-                system_identity, "licenses", ids
-            )
+            rights = vocabulary_service.read_many(system_identity, "licenses", ids)
             for right in rights:
                 serialized_right = {
-                    "rights": right.get("title").get(
-                            current_default_locale()
-                        ),
+                    "rights": right.get("title").get(current_default_locale()),
                     "rightsIdentifierScheme": right.get("props").get("scheme"),
                     "rightsIdentifier": right.get("id"),
                 }

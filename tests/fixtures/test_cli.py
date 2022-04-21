@@ -18,11 +18,14 @@ from invenio_communities.members import Member
 from invenio_requests import current_requests_service
 from invenio_requests.records import Request
 
-from invenio_rdm_records.fixtures.demo import create_fake_community, \
-    create_fake_record
-from invenio_rdm_records.fixtures.tasks import create_demo_community, \
-    create_demo_inclusion_requests, create_demo_invitation_requests, \
-    create_demo_record, get_authenticated_identity
+from invenio_rdm_records.fixtures.demo import create_fake_community, create_fake_record
+from invenio_rdm_records.fixtures.tasks import (
+    create_demo_community,
+    create_demo_inclusion_requests,
+    create_demo_invitation_requests,
+    create_demo_record,
+    get_authenticated_identity,
+)
 from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records import RDMDraft, RDMRecord
@@ -40,8 +43,9 @@ def vocabularies():
     vocabularies.load()
 
 
-def test_create_fake_demo_draft_record(app, location, db, es_clear,
-                                       vocabularies, users):
+def test_create_fake_demo_draft_record(
+    app, location, db, es_clear, vocabularies, users
+):
     """Assert that demo record creation works without failing."""
     user_id = users[0].id
 
@@ -49,9 +53,9 @@ def test_create_fake_demo_draft_record(app, location, db, es_clear,
     RDMDraft.index.refresh()
 
     user_identity = get_authenticated_identity(user_id)
-    drafts = current_rdm_records_service.search_drafts(user_identity,
-                                                       is_published=False,
-                                                       q="versions.index:1")
+    drafts = current_rdm_records_service.search_drafts(
+        user_identity, is_published=False, q="versions.index:1"
+    )
     assert drafts.total > 0
 
     create_demo_record(user_id, create_fake_record(), publish=True)
@@ -73,8 +77,9 @@ def test_create_fake_demo_communities(app, location, db, es_clear, users):
     assert communities.total > 0
 
 
-def test_create_fake_demo_inclusion_requests(app, location, db, es_clear,
-                                             vocabularies, users):
+def test_create_fake_demo_inclusion_requests(
+    app, location, db, es_clear, vocabularies, users
+):
     """Assert that demo inclusion requests creation works without failing."""
     user_id = users[0].id
 
@@ -92,8 +97,9 @@ def test_create_fake_demo_inclusion_requests(app, location, db, es_clear,
     assert reqs.total > 0
 
 
-def test_create_fake_demo_invitation_requests(app, location, db, es_clear,
-                                              vocabularies, users):
+def test_create_fake_demo_invitation_requests(
+    app, location, db, es_clear, vocabularies, users
+):
     """Assert that demo invitation requests creation works without failing."""
     first_user_id = users[0].id
 

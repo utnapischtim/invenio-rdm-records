@@ -10,17 +10,25 @@
 
 from invenio_communities.records.records.systemfields import CommunitiesField
 from invenio_drafts_resources.records import Draft, Record
-from invenio_drafts_resources.records.api import \
-    ParentRecord as ParentRecordBase
+from invenio_drafts_resources.records.api import ParentRecord as ParentRecordBase
 from invenio_pidstore.models import PIDStatus
 from invenio_records.dumpers import ElasticsearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
-from invenio_records.systemfields import ConstantField, DictField, \
-    ModelField, RelationsField
+from invenio_records.systemfields import (
+    ConstantField,
+    DictField,
+    ModelField,
+    RelationsField,
+)
 from invenio_records_resources.records.api import FileRecord
-from invenio_records_resources.records.systemfields import FilesField, \
-    IndexField, PIDListRelation, PIDNestedListRelation, PIDRelation, \
-    PIDStatusCheckField
+from invenio_records_resources.records.systemfields import (
+    FilesField,
+    IndexField,
+    PIDListRelation,
+    PIDNestedListRelation,
+    PIDRelation,
+    PIDStatusCheckField,
+)
 from invenio_requests.records.api import Request
 from invenio_requests.records.systemfields.relatedrecord import RelatedRecord
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
@@ -31,8 +39,7 @@ from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
 
 from . import models
 from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
-from .systemfields import HasDraftCheckField, ParentRecordAccessField, \
-    RecordAccessField
+from .systemfields import HasDraftCheckField, ParentRecordAccessField, RecordAccessField
 
 
 #
@@ -51,14 +58,13 @@ class RDMParent(ParentRecordBase):
     )
 
     # System fields
-    schema = ConstantField(
-        '$schema', 'local://records/parent-v2.0.0.json')
+    schema = ConstantField("$schema", "local://records/parent-v2.0.0.json")
 
     access = ParentRecordAccessField()
 
     review = RelatedRecord(
         Request,
-        keys=['type', 'receiver', 'status'],
+        keys=["type", "receiver", "status"],
     )
 
     communities = CommunitiesField(models.RDMParentCommunity)
@@ -73,121 +79,119 @@ class CommonFieldsMixin:
     versions_model_cls = models.RDMVersionsState
     parent_record_cls = RDMParent
 
-    schema = ConstantField(
-       '$schema', 'local://records/record-v4.0.0.json')
+    schema = ConstantField("$schema", "local://records/record-v4.0.0.json")
 
     dumper = ElasticsearchDumper(
         extensions=[
-            EDTFDumperExt('metadata.publication_date'),
+            EDTFDumperExt("metadata.publication_date"),
             EDTFListDumperExt("metadata.dates", "date"),
-            RelationDumperExt('relations'),
+            RelationDumperExt("relations"),
         ]
     )
 
     relations = RelationsField(
         creator_affiliations=PIDNestedListRelation(
-            'metadata.creators',
-            relation_field='affiliations',
-            keys=['name'],
+            "metadata.creators",
+            relation_field="affiliations",
+            keys=["name"],
             pid_field=Affiliation.pid,
-            cache_key='affiliations',
+            cache_key="affiliations",
         ),
         contributor_affiliations=PIDNestedListRelation(
-            'metadata.contributors',
-            relation_field='affiliations',
-            keys=['name'],
+            "metadata.contributors",
+            relation_field="affiliations",
+            keys=["name"],
             pid_field=Affiliation.pid,
-            cache_key='affiliations',
+            cache_key="affiliations",
         ),
         languages=PIDListRelation(
-            'metadata.languages',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('languages'),
-            cache_key='languages',
+            "metadata.languages",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("languages"),
+            cache_key="languages",
         ),
         resource_type=PIDRelation(
-            'metadata.resource_type',
-            keys=['title', 'props.type', 'props.subtype'],
-            pid_field=Vocabulary.pid.with_type_ctx('resourcetypes'),
-            cache_key='resource_type',
-            value_check=dict(tags=['depositable']),
+            "metadata.resource_type",
+            keys=["title", "props.type", "props.subtype"],
+            pid_field=Vocabulary.pid.with_type_ctx("resourcetypes"),
+            cache_key="resource_type",
+            value_check=dict(tags=["depositable"]),
         ),
         subjects=PIDListRelation(
-            'metadata.subjects',
-            keys=['subject', 'scheme'],
+            "metadata.subjects",
+            keys=["subject", "scheme"],
             pid_field=Subject.pid,
-            cache_key='subjects',
+            cache_key="subjects",
         ),
         licenses=PIDListRelation(
-            'metadata.rights',
-            keys=['title', 'description',
-                  'icon', 'props.url', 'props.scheme'],
-            pid_field=Vocabulary.pid.with_type_ctx('licenses'),
-            cache_key='licenses',
+            "metadata.rights",
+            keys=["title", "description", "icon", "props.url", "props.scheme"],
+            pid_field=Vocabulary.pid.with_type_ctx("licenses"),
+            cache_key="licenses",
         ),
         related_identifiers=PIDListRelation(
-            'metadata.related_identifiers',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('resourcetypes'),
-            cache_key='resource_type',
-            relation_field='resource_type',
-            value_check=dict(tags=['linkable']),
+            "metadata.related_identifiers",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("resourcetypes"),
+            cache_key="resource_type",
+            relation_field="resource_type",
+            value_check=dict(tags=["linkable"]),
         ),
         title_types=PIDListRelation(
-            'metadata.additional_titles',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('titletypes'),
-            cache_key='title_type',
-            relation_field='type',
+            "metadata.additional_titles",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("titletypes"),
+            cache_key="title_type",
+            relation_field="type",
         ),
         title_languages=PIDListRelation(
-            'metadata.additional_titles',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('languages'),
-            cache_key='languages',
-            relation_field='lang',
+            "metadata.additional_titles",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("languages"),
+            cache_key="languages",
+            relation_field="lang",
         ),
         creators_role=PIDListRelation(
-            'metadata.creators',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('creatorsroles'),
-            cache_key='role',
-            relation_field='role'
+            "metadata.creators",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("creatorsroles"),
+            cache_key="role",
+            relation_field="role",
         ),
         contributors_role=PIDListRelation(
-            'metadata.contributors',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('contributorsroles'),
-            cache_key='role',
-            relation_field='role'
+            "metadata.contributors",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("contributorsroles"),
+            cache_key="role",
+            relation_field="role",
         ),
         description_type=PIDListRelation(
-            'metadata.additional_descriptions',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('descriptiontypes'),
-            cache_key='description_type',
-            relation_field='type',
+            "metadata.additional_descriptions",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("descriptiontypes"),
+            cache_key="description_type",
+            relation_field="type",
         ),
         description_languages=PIDListRelation(
-            'metadata.additional_descriptions',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('languages'),
-            cache_key='languages',
-            relation_field='lang',
+            "metadata.additional_descriptions",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("languages"),
+            cache_key="languages",
+            relation_field="lang",
         ),
         date_types=PIDListRelation(
-            'metadata.dates',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('datetypes'),
-            cache_key='date_types',
-            relation_field='type',
+            "metadata.dates",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("datetypes"),
+            cache_key="date_types",
+            relation_field="type",
         ),
         relation_types=PIDListRelation(
-            'metadata.related_identifiers',
-            keys=['title'],
-            pid_field=Vocabulary.pid.with_type_ctx('relationtypes'),
-            cache_key='relation_types',
-            relation_field='relation_type',
+            "metadata.related_identifiers",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("relationtypes"),
+            cache_key="relation_types",
+            relation_field="relation_type",
         ),
     )
 
@@ -217,9 +221,7 @@ class RDMDraft(CommonFieldsMixin, Draft):
 
     model_cls = models.RDMDraftMetadata
 
-    index = IndexField(
-        "rdmrecords-drafts-draft-v4.0.0", search_alias="rdmrecords"
-    )
+    index = IndexField("rdmrecords-drafts-draft-v4.0.0", search_alias="rdmrecords")
 
     files = FilesField(
         store=False,
