@@ -12,6 +12,15 @@
 class FromConfigPIDsProviders:
     """Data descriptor for pid providers configuration."""
 
+    def __init__(
+        self,
+        persistent_identifiers="RDM_PERSISTENT_IDENTIFIERS",
+        persistent_identifier_providers="RDM_PERSISTENT_IDENTIFIER_PROVIDERS",
+    ):
+        """Constructor of FromConfigPIDsProviders."""
+        self.persistent_identifiers = persistent_identifiers
+        self.persistent_identifier_providers = persistent_identifier_providers
+
     def __get__(self, obj, objtype=None):
         """Return value that was grafted on obj (descriptor protocol)."""
 
@@ -31,10 +40,10 @@ class FromConfigPIDsProviders:
 
             return provider_dict
 
-        pids = obj._app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
+        pids = obj._app.config.get(self.persistent_identifiers, {})
         providers = {
             p.name: p
-            for p in obj._app.config.get("RDM_PERSISTENT_IDENTIFIER_PROVIDERS", [])
+            for p in obj._app.config.get(self.persistent_identifier_providers, [])
         }
         doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
 
@@ -48,9 +57,13 @@ class FromConfigPIDsProviders:
 class FromConfigRequiredPIDs:
     """Data descriptor for required pids configuration."""
 
+    def __init__(self, persistent_identifiers="RDM_PERSISTENT_IDENTIFIERS"):
+        """Constructor of FromConfigRequiredPIDs."""
+        self.persistent_identifiers = persistent_identifiers
+
     def __get__(self, obj, objtype=None):
         """Return required pids (descriptor protocol)."""
-        pids = obj._app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
+        pids = obj._app.config.get(self.persistent_identifiers, {})
         doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
 
         pids = {
