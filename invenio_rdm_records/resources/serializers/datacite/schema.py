@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2024 Graz University of Technology.
 # Copyright (C) 2023 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -617,7 +617,8 @@ class DataCite43Schema(BaseSerializerSchema):
             # award
             award = funding.get("award")
             if award:  # having an award is optional
-                funding_ref["awardTitle"] = award.get("title", {}).get("en", missing)
+                titles = [a for a in award.get("title", {}).values()]
+                funding_ref["awardTitle"] = titles[0]
                 funding_ref["awardNumber"] = award["number"]
 
                 identifiers = award.get("identifiers", [])
