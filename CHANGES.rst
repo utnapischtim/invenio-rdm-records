@@ -19,6 +19,11 @@ Version 17.0.0.dev1 (released 2024-12-16)
 - setup: change to reusable workflows
 - setup: bump major dependencies
 
+Version v16.5.1 (released 2024-12-16)
+
+- pids: add manage permission to be able to manage DOIs
+- deposit: fix validation check when user needs a DOI and DOI is optional
+
 Version v16.5.0 (released 2024-12-16)
 
 - pids: add support for optional DOI
