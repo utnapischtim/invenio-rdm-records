@@ -3,7 +3,7 @@
     Copyright (C) 2019-2024 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
-    Copyright (C) 2024 Graz University of Technology.
+    Copyright (C) 2024-2025 Graz University of Technology.
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -18,6 +18,10 @@ Version 17.0.0.dev1 (released 2024-12-16)
 - comp: make compatible to flask-sqlalchemy>=3.1
 - setup: change to reusable workflows
 - setup: bump major dependencies
+
+Version v16.5.0 (released 2024-12-16)
+
+- pids: add support for optional DOI
 
 Version v16.4.1 (released 2024-12-11)
 
