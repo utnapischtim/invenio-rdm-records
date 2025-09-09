@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C)      2025 CESNET.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -116,11 +117,11 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     }
   };
 
-  #resetOnComplete = (result) => {
+  #resetOnComplete = () => {
     this.uppy.cancelAll();
   };
 
-  #saveDraftBeforeUpload = async (fileIDs) => {
+  #saveDraftBeforeUpload = async () => {
     this.draftRecord = await this.opts.saveAndFetchDraft(this.draftRecord);
   };
 
@@ -128,7 +129,7 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     const { uploadURL } = response;
     if (!uploadURL) {
       // Ignore cases when uploadURL missing - not a single-part upload
-      return;
+      return "";
     }
     return this.completeMultipartUpload(file);
   };
@@ -405,7 +406,7 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
    *
    * Disabled/Noop as upload abortion is handled by the `#onFileRemoved` event handler for all upload flows.
    */
-  async abortMultipartUpload(file) {}
+  async abortMultipartUpload() {}
 }
 
 export default RDMUppyUploaderPlugin;

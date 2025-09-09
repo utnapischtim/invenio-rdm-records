@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C)      2025 CESNET.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -66,7 +67,9 @@ const importLangPack = async (code) => {
   try {
     return await import(`@uppy/locales/lib/${code}.js`);
   } catch (e) {
-    console.warn(`No Uppy locale found for ${code}, falling back to en_US`);
+    console.warn(
+      `No Uppy locale found for ${code}, falling back to en_US. error: ${e}`
+    );
     return await import("@uppy/locales/lib/en_US.js");
   }
 };

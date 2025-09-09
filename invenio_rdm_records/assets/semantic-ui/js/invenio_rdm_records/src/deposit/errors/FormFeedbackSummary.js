@@ -1,7 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C) 2021 Graz University of Technology.
+// Copyright (C) 2021-2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -112,7 +112,7 @@ export class FormFeedbackSummary extends Component {
       return null;
     }
 
-    return orderedSections.map((section, i) => {
+    return orderedSections.map((section) => {
       const { label, count } = errorSections.get(section);
       return (
         <a key={section} className="pl-5 comma-separated" href={`#${section}`}>

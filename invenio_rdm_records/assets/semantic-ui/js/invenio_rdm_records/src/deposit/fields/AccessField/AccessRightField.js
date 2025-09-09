@@ -2,6 +2,7 @@
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2021 Graz University of Technology.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -98,7 +99,7 @@ export class AccessRightFieldCmp extends Component {
 }
 
 AccessRightFieldCmp.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.string.isRequired,
   fieldPath: PropTypes.string.isRequired,
   formik: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,

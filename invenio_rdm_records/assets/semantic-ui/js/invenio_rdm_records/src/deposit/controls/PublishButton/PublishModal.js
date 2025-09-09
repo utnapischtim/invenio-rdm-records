@@ -1,5 +1,6 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2025 CERN.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -64,61 +65,66 @@ class PublishModalComponent extends Component {
         validateOnChange={false}
         validateOnBlur={false}
       >
-        {({ values, handleSubmit }) => {
-          return (
-            <Modal
-              open={isConfirmModalOpen}
-              onClose={onClose}
-              size="small"
-              closeIcon
-              closeOnDimmerClick={false}
-            >
-              <Modal.Header>
-                {i18next.t("Are you sure you want to publish this record?")}
-              </Modal.Header>
-              {/* the modal text should only ever come from backend configuration */}
-              <Modal.Content>
-                <Message visible warning>
-                  <p>
-                    <Icon name="warning sign" />{" "}
-                    {i18next.t(
-                      "Once the record is published you will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
-                    )}
-                  </p>
-                </Message>
-                <Form>
-                  {beforeContent && <div>{beforeContent()}</div>}
-                  {extraCheckboxes.length > 0 &&
-                    extraCheckboxes.map((checkbox) => (
-                      <PublishCheckboxComponent
-                        id={`${checkbox.fieldPath}-checkbox`}
-                        key={checkbox.fieldPath}
-                        fieldPath={checkbox.fieldPath}
-                        text={checkbox.text}
-                      />
-                    ))}
-                  {afterContent && <div>{afterContent()}</div>}
-                </Form>
-                {publishModalExtraContent && (
-                  <div dangerouslySetInnerHTML={{ __html: publishModalExtraContent }} />
-                )}
-              </Modal.Content>
-              <Modal.Actions>
-                <Button onClick={onClose} floated="left">
-                  {i18next.t("Cancel")}
-                </Button>
-                <Button
-                  name="publish"
-                  onClick={(event) => {
-                    handleSubmit(event);
-                  }}
-                  positive
-                  content={buttonLabel}
-                />
-              </Modal.Actions>
-            </Modal>
-          );
-        }}
+        {
+          // eslint-disable-next-line no-unused-vars
+          ({ values, handleSubmit }) => {
+            return (
+              <Modal
+                open={isConfirmModalOpen}
+                onClose={onClose}
+                size="small"
+                closeIcon
+                closeOnDimmerClick={false}
+              >
+                <Modal.Header>
+                  {i18next.t("Are you sure you want to publish this record?")}
+                </Modal.Header>
+                {/* the modal text should only ever come from backend configuration */}
+                <Modal.Content>
+                  <Message visible warning>
+                    <p>
+                      <Icon name="warning sign" />{" "}
+                      {i18next.t(
+                        "Once the record is published you will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
+                      )}
+                    </p>
+                  </Message>
+                  <Form>
+                    {beforeContent && <div>{beforeContent()}</div>}
+                    {extraCheckboxes.length > 0 &&
+                      extraCheckboxes.map((checkbox) => (
+                        <PublishCheckboxComponent
+                          id={`${checkbox.fieldPath}-checkbox`}
+                          key={checkbox.fieldPath}
+                          fieldPath={checkbox.fieldPath}
+                          text={checkbox.text}
+                        />
+                      ))}
+                    {afterContent && <div>{afterContent()}</div>}
+                  </Form>
+                  {publishModalExtraContent && (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: publishModalExtraContent }}
+                    />
+                  )}
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button onClick={onClose} floated="left">
+                    {i18next.t("Cancel")}
+                  </Button>
+                  <Button
+                    name="publish"
+                    onClick={(event) => {
+                      handleSubmit(event);
+                    }}
+                    positive
+                    content={buttonLabel}
+                  />
+                </Modal.Actions>
+              </Modal>
+            );
+          }
+        }
       </Formik>
     );
   }

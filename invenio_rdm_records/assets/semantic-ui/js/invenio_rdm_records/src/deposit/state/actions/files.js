@@ -2,6 +2,7 @@
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2025 CESNET.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -57,6 +58,7 @@ export const uploadFile = (draft, file, uploadUrl) => {
 };
 
 export const uploadFiles = (draft, files) => {
+  // eslint-disable-next-line no-unused-vars
   return async (dispatch, _, config) => {
     try {
       const savedDraft = await dispatch(saveAndFetchDraft(draft));

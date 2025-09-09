@@ -1,7 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C) 2021 Graz University of Technology.
+// Copyright (C) 2021-2025 Graz University of Technology.
 // Copyright (C) 2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -89,7 +89,7 @@ export class LicenseModal extends Component {
       initialLicense: initialLicenseProp,
     } = this.props;
     const { open } = this.state;
-    const modeState = this.state.mode;
+    const { mode: modeState } = this.state;
 
     const initialLicense = initialLicenseProp || {
       title: "",

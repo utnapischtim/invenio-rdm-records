@@ -1,5 +1,6 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -171,92 +172,95 @@ class SubmitReviewModalComponent extends Component {
         validateOnChange={false}
         validateOnBlur={false}
       >
-        {({ values, handleSubmit }) => {
-          return (
-            <Modal
-              open={isConfirmModalOpen}
-              onClose={onClose}
-              size="small"
-              closeIcon
-              closeOnDimmerClick={false}
-            >
-              <Modal.Header>{modalContent.headerTitle}</Modal.Header>
-              <Modal.Content>
-                {errors && (
-                  <ErrorMessage
-                    header={i18next.t("Unable to submit request.")}
-                    content={errors}
-                    icon="exclamation"
-                    negative
-                  />
-                )}
-                <Message visible warning>
-                  <p>
-                    <Icon name="warning sign" />
-                    {modalContent.msgWarningTitle}
-                  </p>
-                </Message>
-                <Form>
-                  {beforeContent && <div>{beforeContent()}</div>}
-                  <PublishCheckboxComponent
-                    id="accept-access-checkbox"
-                    fieldPath="acceptAccessToRecord"
-                    text={modalContent.acceptAccessToRecordText}
-                  />
-                  {!record && (
+        {
+          // eslint-disable-next-line no-unused-vars
+          ({ values, handleSubmit }) => {
+            return (
+              <Modal
+                open={isConfirmModalOpen}
+                onClose={onClose}
+                size="small"
+                closeIcon
+                closeOnDimmerClick={false}
+              >
+                <Modal.Header>{modalContent.headerTitle}</Modal.Header>
+                <Modal.Content>
+                  {errors && (
+                    <ErrorMessage
+                      header={i18next.t("Unable to submit request.")}
+                      content={errors}
+                      icon="exclamation"
+                      negative
+                    />
+                  )}
+                  <Message visible warning>
+                    <p>
+                      <Icon name="warning sign" />
+                      {modalContent.msgWarningTitle}
+                    </p>
+                  </Message>
+                  <Form>
+                    {beforeContent && <div>{beforeContent()}</div>}
                     <PublishCheckboxComponent
-                      id="accept-after-publish-checkbox"
-                      fieldPath="acceptAfterPublishRecord"
-                      text={modalContent.acceptAfterPublishRecordText}
+                      id="accept-access-checkbox"
+                      fieldPath="acceptAccessToRecord"
+                      text={modalContent.acceptAccessToRecordText}
                     />
-                  )}
-                  {extraCheckboxes.length > 0 &&
-                    extraCheckboxes.map((checkbox) => (
+                    {!record && (
                       <PublishCheckboxComponent
-                        id={`${checkbox.fieldPath}-checkbox`}
-                        key={checkbox.fieldPath}
-                        fieldPath={checkbox.fieldPath}
-                        text={checkbox.text}
+                        id="accept-after-publish-checkbox"
+                        fieldPath="acceptAfterPublishRecord"
+                        text={modalContent.acceptAfterPublishRecordText}
                       />
-                    ))}
-                  {!directPublish && (
-                    <TextAreaField
-                      fieldPath="reviewComment"
-                      label={i18next.t("Message to curators (optional)")}
-                    />
-                  )}
-                  {publishModalExtraContent && (
-                    <div
-                      dangerouslySetInnerHTML={{ __html: publishModalExtraContent }}
-                    />
-                  )}
-                  {afterContent && <div>{afterContent()}</div>}
-                </Form>
-              </Modal.Content>
-              <Modal.Actions>
-                <Button
-                  onClick={onClose}
-                  floated="left"
-                  loading={loading}
-                  disabled={loading}
-                >
-                  {i18next.t("Cancel")}
-                </Button>
-                <Button
-                  name="submitReview"
-                  onClick={(event) => {
-                    handleSubmit(event);
-                  }}
-                  loading={loading}
-                  disabled={loading}
-                  positive={directPublish}
-                  primary={!directPublish}
-                  content={modalContent.submitBtnLbl}
-                />
-              </Modal.Actions>
-            </Modal>
-          );
-        }}
+                    )}
+                    {extraCheckboxes.length > 0 &&
+                      extraCheckboxes.map((checkbox) => (
+                        <PublishCheckboxComponent
+                          id={`${checkbox.fieldPath}-checkbox`}
+                          key={checkbox.fieldPath}
+                          fieldPath={checkbox.fieldPath}
+                          text={checkbox.text}
+                        />
+                      ))}
+                    {!directPublish && (
+                      <TextAreaField
+                        fieldPath="reviewComment"
+                        label={i18next.t("Message to curators (optional)")}
+                      />
+                    )}
+                    {publishModalExtraContent && (
+                      <div
+                        dangerouslySetInnerHTML={{ __html: publishModalExtraContent }}
+                      />
+                    )}
+                    {afterContent && <div>{afterContent()}</div>}
+                  </Form>
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button
+                    onClick={onClose}
+                    floated="left"
+                    loading={loading}
+                    disabled={loading}
+                  >
+                    {i18next.t("Cancel")}
+                  </Button>
+                  <Button
+                    name="submitReview"
+                    onClick={(event) => {
+                      handleSubmit(event);
+                    }}
+                    loading={loading}
+                    disabled={loading}
+                    positive={directPublish}
+                    primary={!directPublish}
+                    content={modalContent.submitBtnLbl}
+                  />
+                </Modal.Actions>
+              </Modal>
+            );
+          }
+        }
       </Formik>
     );
   }
